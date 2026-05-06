@@ -1,11 +1,17 @@
 import * as React from 'react';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getCurrentUser } from '@/lib/actions/auth';
 import { getUserProfile } from '@/lib/actions/profile';
 import { redirect } from 'next/navigation';
 import { SettingsClient } from './settings-client';
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const user = await getCurrentUser();
 
   if (!user) {

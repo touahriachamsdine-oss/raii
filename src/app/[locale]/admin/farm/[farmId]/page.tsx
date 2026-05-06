@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { User, Users } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { format, parseISO, isValid } from 'date-fns';
 import { getFarmDetails } from '@/lib/actions/admin';
 import { FarmDownloadButton } from '@/components/admin/farm-download-button';
@@ -29,7 +29,8 @@ const formatDisplayDate = (dateString?: string) => {
 };
 
 export default async function FarmDetailPage({ params }: { params: Promise<{ farmId: string, locale: string }> }) {
-  const { farmId } = await params;
+  const { farmId, locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations();
   const { farm, users, animals } = await getFarmDetails(farmId) as { farm: Farm, users: UserProfile[], animals: Animal[] };
 

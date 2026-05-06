@@ -1,6 +1,6 @@
 import { SymptomCheckerClient } from './symptom-checker-client';
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getUserProfile } from '@/lib/actions/profile';
 import { getAnimals } from '@/lib/actions/animals';
 import { getCurrentUser } from '@/lib/actions/auth';
@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function SymptomCheckerPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations('SymptomCheckerPage');
 
   // For now use mock UID as in dashboard, until session is implemented

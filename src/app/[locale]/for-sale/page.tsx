@@ -34,7 +34,15 @@ const AnimalDetail = ({ label, value }: { label: string; value?: string }) => {
   );
 };
 
-export default async function ForSalePage() {
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+
+export default async function ForSalePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations('ForSalePage');
   const tAnimalPage = await getTranslations('AnimalsPage');
   const tSpecies = await getTranslations('AnimalSpecies');
