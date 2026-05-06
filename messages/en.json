@@ -1,0 +1,491 @@
+
+{
+  "Metadata": {
+    "title": {
+      "default": "RAII-AI",
+      "template": "%s | RAII-AI"
+    },
+    "description": "Intelligent livestock management."
+  },
+  "LandingPage": {
+    "title": "Welcome to RAII-AI",
+    "subtitle": "Your complete solution for intelligent livestock management. Streamline operations, monitor health, and boost productivity with ease.",
+    "getStarted": "Get Started",
+    "signIn": "Sign In"
+  },
+  "MainLayout": {
+    "sidebar": {
+      "title": "RAII-AI",
+      "dashboard": "Dashboard",
+      "animals": "Animals",
+      "symptomChecker": "Symptom Checker",
+      "alerts": "Alerts",
+      "settings": "Settings",
+      "forSale": "For Sale",
+      "admin": "Admin",
+      "inventory": "Inventory"
+    },
+    "userMenu": {
+      "guestUser": "Guest User",
+      "guestEmail": "guest@example.com",
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Log out"
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "activeAnimals": "Active Animals",
+    "activeAnimalsSubtext": "Total animals on your farm",
+    "milkToday": "Avg. Daily Milk (L)",
+    "milkTodaySubtext": "Sum of avg. daily yield",
+    "vaccinationsDue": "Vaccinations Due",
+    "vaccinationsDueSubtext": "Overdue or in next 7 days",
+    "openAlerts": "Open Alerts",
+    "openAlertsSubtext": "Across all your farms",
+    "recentActivity": "Recent Activity",
+    "recentActivityPlaceholder": "Recent activity feed will go here.",
+    "healthOverview": "Health Overview",
+    "healthOverviewPlaceholder": "A chart showing animal health trends will go here.",
+    "deceasedAnimals": "Deceased Animals",
+    "deceasedAnimalsSubtext": "Total recorded deceased",
+    "reproduction": "In Reproduction",
+    "reproductionSubtext": "Animals pregnant in last year",
+    "animalsBySpecies": "Animals by Species",
+    "total": "Total"
+  },
+  "AnimalsPage": {
+    "title": "Animals",
+    "description": "Manage your livestock here.",
+    "addAnimalButton": "Add Animal",
+    "searchPlaceholder": "Search by Animal ID...",
+    "tableHeaders": {
+      "photo": "Photo",
+      "id": "Animal ID",
+      "species": "Species",
+      "breed": "Breed",
+      "dob": "DOB",
+      "gender": "Gender",
+      "status": "Status",
+      "purpose": "Purpose",
+      "lastPregnancy": "Last Pregnancy",
+      "weight": "Weight",
+      "production": "Production",
+      "sickness": "Sickness",
+      "vaccinations": "Vaccinations",
+      "actions": "Actions"
+    },
+    "editAction": "Edit",
+    "deleteAction": "Delete",
+    "consultationAction": "Consultation",
+    "addDialog": {
+      "title": "Add New Animal",
+      "description": "Fill in the details below to add a new animal to your records.",
+      "addButton": "Add Animal"
+    },
+    "editDialog": {
+      "title": "Edit Animal",
+      "description": "Update the animal's details below.",
+      "saveButton": "Save Changes"
+    },
+    "form": {
+      "id": {
+        "label": "Animal ID",
+        "placeholder": "Enter a unique ID"
+      },
+      "species": {
+        "label": "Species",
+        "placeholder": "Select species"
+      },
+      "breed": {
+        "label": "Breed",
+        "placeholder": "e.g. Holstein"
+      },
+      "dob": "Date of Birth",
+      "gender": {
+        "label": "Gender",
+        "placeholder": "Select gender"
+      },
+      "purpose": {
+        "label": "Purpose",
+        "placeholder": "Select purpose"
+      },
+      "lastPregnancy": "Last Pregnancy Date",
+      "weight": {
+        "label": "Weight",
+        "placeholder": "e.g. 500 kg"
+      },
+      "monthlyProduction": {
+        "label": "Monthly Production",
+        "placeholder": "e.g. 800 L"
+      },
+      "sickness": {
+        "label": "Sickness",
+        "placeholder": "Any current sickness"
+      },
+      "vaccinations": {
+        "label": "Vaccinations",
+        "placeholder": "List of vaccinations and dates"
+      },
+      "images": {
+        "label": "Photo",
+        "placeholder": "Choose an image to upload",
+        "description": "Upload a photo for this animal."
+      }
+    },
+    "cancelButton": "Cancel"
+  },
+  "AnimalProfilePage": {
+    "title": "Animal Profile",
+    "description": "View and manage animal details and consultations.",
+    "animalDetails": "Animal Details",
+    "addConsultation": "Add Consultation",
+    "consultationHistory": "Consultation History",
+    "noConsultations": "No consultations found.",
+    "tableHeaders": {
+      "date": "Date",
+      "type": "Type",
+      "professional": "Professional",
+      "weight": "Weight",
+      "production": "Production",
+      "health": "Health",
+      "repro": "Repro",
+      "vaccine": "Vaccine",
+      "notes": "Notes"
+    },
+    "dialog": {
+      "title": "Add New Consultation",
+      "description": "Record the details of the consultation below.",
+      "professionalRole": {
+        "label": "Professional's Role",
+        "placeholder": "Select a role",
+        "vet": "Veterinarian",
+        "farmer": "Farmer"
+      },
+      "professionalName": {
+        "label": "Professional's Name"
+      },
+      "consultationType": {
+        "label": "Consultation Type",
+        "placeholder": "Select type",
+        "weight": "Weight",
+        "production": "Production",
+        "healthStatus": "Health Status",
+        "reproduction": "Reproduction",
+        "vaccination": "Vaccination"
+      },
+      "weight": "Weight (kg)",
+      "production": "Production (L/month)",
+      "healthStatus": "Health Status",
+      "reproduction": "Reproduction Status",
+      "vaccination": "Vaccination Details",
+      "notes": "Notes",
+      "saveButton": "Save Consultation"
+    },
+    "toast": {
+      "success": {
+        "title": "Consultation Saved",
+        "description": "The animal's record has been updated successfully."
+      },
+      "error": {
+        "title": "Save Failed",
+        "description": "Could not save the consultation."
+      }
+    }
+  },
+  "AnimalStatus": {
+    "Active": "Active",
+    "Sold": "Sold",
+    "Deceased": "Deceased",
+    "ForSale": "For Sale"
+  },
+  "AnimalGender": {
+    "Female": "Female",
+    "Male": "Male"
+  },
+  "AnimalPurpose": {
+    "Meat": "Meat",
+    "Milk": "Milk",
+    "Other": "Other"
+  },
+  "AnimalSpecies": {
+    "bovine": "Bovine",
+    "ovine": "Ovine",
+    "caprine": "Caprine",
+    "camelid": "Camelid",
+    "other": "Other"
+  },
+  "SymptomCheckerPage": {
+    "metadata": {
+      "title": "Symptom Checker"
+    },
+    "title": "Symptom Checker",
+    "description": "Describe the animal's species and symptoms to get a preliminary triage. This tool is for informational purposes only and does not replace professional veterinary advice."
+  },
+  "SymptomCheckerClient": {
+    "title": "New Triage",
+    "toast": {
+      "error": {
+        "title": "An error occurred",
+        "description": "Please try again later."
+      }
+    },
+    "myAnimalTab": {
+      "title": "My Animal",
+      "form": {
+        "animal": {
+          "label": "Animal",
+          "placeholder": "Select an animal from your records"
+        }
+      }
+    },
+    "newTriageTab": {
+      "title": "New Triage",
+      "form": {
+        "species": {
+          "label": "Species",
+          "placeholder": "Select animal species"
+        }
+      }
+    },
+    "shared": {
+      "form": {
+        "symptoms": {
+          "label": "Symptoms",
+          "placeholder": "e.g., Lethargy, loss of appetite, coughing",
+          "description": "Enter symptoms, separated by commas or new lines."
+        }
+      },
+      "submitButton": "Analyze Symptoms"
+    },
+    "loadingState": {
+      "title": "Analyzing...",
+      "description": "The AI is processing the symptoms. This may take a moment."
+    },
+    "resultCard": {
+      "title": "Triage Report",
+      "description": "Based on the provided symptoms.",
+      "urgency": "Urgency",
+      "likelyCauses": {
+        "title": "Likely Causes",
+        "confidence": "Confidence",
+        "none": "No specific causes identified."
+      },
+      "recommendedActions": {
+        "title": "Recommended Actions"
+      },
+      "disclaimer": {
+        "title": "Disclaimer",
+        "description": "This is not medical advice. Always consult a qualified veterinarian for diagnosis and treatment."
+      }
+    },
+    "waitingState": {
+      "title": "Waiting for Input",
+      "description": "Fill out the form on the left to get a symptom analysis."
+    }
+  },
+  "AlertsPage": {
+    "title": "Alerts",
+    "description": "View and manage alerts for your farm. This feature is coming soon."
+  },
+  "SettingsPage": {
+    "title": "Settings",
+    "description": "Manage your account, appearance, and language preferences.",
+    "profile": {
+      "title": "Profile",
+      "description": "This is how others will see you on the site.",
+      "form": {
+        "firstName": { "label": "First Name", "placeholder": "Enter your first name" },
+        "lastName": { "label": "Last Name", "placeholder": "Enter your last name" },
+        "familyName": { "label": "Family Name", "placeholder": "Enter your family name" },
+        "idCardNumber": { "label": "ID Card Number", "placeholder": "Enter your ID card number" },
+        "phoneNumber": { "label": "Phone Number", "placeholder": "Enter your phone number" },
+        "address": { "label": "Address", "placeholder": "Enter your address" },
+        "wilaya": { "label": "Wilaya", "placeholder": "Select your Wilaya" },
+        "commune": { "label": "Commune", "placeholder": "Select your Commune" },
+        "email": { "label": "Email" },
+        "saveButton": "Save Changes",
+        "savingButton": "Saving..."
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "description": "Update your password here. You will be logged out after a successful password change.",
+        "form": {
+            "oldPassword": { "label": "Old Password" },
+            "newPassword": { "label": "New Password" },
+            "confirmPassword": { "label": "Confirm New Password" },
+            "saveButton": "Update Password",
+            "savingButton": "Updating..."
+        },
+        "toast": {
+            "success": {
+                "title": "Password Updated",
+                "description": "Your password has been changed successfully. Please log in again."
+            },
+            "error": {
+                "title": "Update Failed",
+                "description": "Could not update your password. Please check your old password."
+            }
+        }
+      },
+      "toast": {
+        "success": {
+          "title": "Profile Updated",
+          "description": "Your profile has been updated successfully."
+        },
+        "error": {
+          "title": "Update Failed",
+          "description": "Could not update your profile."
+        }
+      }
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the look and feel of the app.",
+      "theme": {
+        "label": "Theme",
+        "placeholder": "Select a theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose the language for the application.",
+      "label": "Language",
+      "placeholder": "Select a language",
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
+    },
+    "manageVets": {
+      "title": "Manage Veterinarians",
+      "description": "Find and assign veterinarians to your farm.",
+      "assignedTitle": "Assigned Vets",
+      "searchTitle": "Assign a New Vet",
+      "searchPlaceholder": "Search by name or email...",
+      "searchButton": "Search",
+      "searchingButton": "Searching...",
+      "assignButton": "Assign",
+      "removeButton": "Remove",
+      "noAssignedVets": "No veterinarians are currently assigned to this farm.",
+      "noSearchResults": "No vets found matching your search.",
+      "toast": {
+        "assignSuccess": {
+          "title": "Vet Assigned",
+          "description": "The veterinarian has been successfully assigned to your farm."
+        },
+        "assignError": {
+          "title": "Assignment Failed",
+          "description": "Could not assign the veterinarian."
+        },
+        "removeSuccess": {
+          "title": "Vet Removed",
+          "description": "The veterinarian has been removed from your farm."
+        },
+        "removeError": {
+          "title": "Removal Failed",
+          "description": "Could not remove the veterinarian."
+        }
+      }
+    }
+  },
+  "ForSalePage": {
+    "title": "Animals For Sale",
+    "description": "Browse livestock available for purchase.",
+    "noImage": "No image available",
+    "details": "Details",
+    "contactSeller": "Contact Seller"
+  },
+  "Admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "description": "Oversee all registered farms and users.",
+      "farmList": {
+        "title": "All Farms",
+        "farmName": "Farm Name",
+        "country": "Country",
+        "locale": "Locale"
+      }
+    },
+    "farmDetail": {
+      "description": "Detailed overview of the selected farm.",
+      "downloadCsv": "Download Animal CSV",
+      "users": {
+        "title": "Associated Users"
+      },
+      "animals": {
+        "title": "All Animals on Farm"
+      }
+    }
+  },
+  "LoginPage": {
+    "title": "Login",
+    "description": "Enter your email below to login to your account.",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "m@example.com"
+      },
+      "password": {
+        "label": "Password"
+      }
+    },
+    "signInButton": "Sign in",
+    "signingInButton": "Signing in...",
+    "dontHaveAccount": "Don't have an account?",
+    "signUpLink": "Sign up",
+    "toast": {
+      "success": {
+        "title": "Login Successful",
+        "description": "Welcome back!"
+      },
+      "error": {
+        "title": "Login Failed",
+        "credentials": "Please check your credentials and try again.",
+        "serviceUnavailable": "Authentication service not available. Please try again later."
+      }
+    }
+  },
+  "SignupPage": {
+    "title": "Sign Up for RAII-AI",
+    "mission": "Streamlining Livestock Management.",
+    "description": "Enter your information to create an account.",
+    "createAccountButton": "Create account",
+    "creatingAccountButton": "Creating account...",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "role": {
+      "label": "I am a...",
+      "placeholder": "Select your role",
+      "owner": "Farm Owner",
+      "vet": "Veterinarian"
+    },
+    "form": {
+        "firstName": { "label": "First Name", "placeholder": "e.g. John" },
+        "lastName": { "label": "Last Name", "placeholder": "e.g. Doe" },
+        "familyName": { "label": "Family Name", "placeholder": "Your family or farm's trade name" },
+        "idCardNumber": { "label": "ID Card Number", "placeholder": "Farmer card or official ID" },
+        "farmName": { "label": "Farm Name", "placeholder": "The name of the farm you work with" },
+        "phoneNumber": { "label": "Phone Number", "placeholder": "+1 (555) 000-0000" },
+        "address": { "label": "Address", "placeholder": "123 Main St" },
+        "wilaya": { "label": "Wilaya", "placeholder": "Select Wilaya" },
+        "commune": { "label": "Commune", "placeholder": "Select Commune" },
+        "email": { "label": "Email Address", "placeholder": "m@example.com" },
+        "password": { "label": "Password" }
+    },
+    "toast": {
+      "success": {
+        "title": "Signup Successful",
+        "description": "We've created your account for you."
+      },
+      "error": {
+        "title": "Signup Failed",
+        "description": "Database service is not available. Please try again later."
+      }
+    }
+  }
+}
+
+    

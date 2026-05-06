@@ -1,0 +1,491 @@
+
+{
+  "Metadata": {
+    "title": {
+      "default": "RAII-AI",
+      "template": "%s | RAII-AI"
+    },
+    "description": "إدارة ذكية للثروة الحيوانية."
+  },
+  "LandingPage": {
+    "title": "أهلاً بك في RAII-AI",
+    "subtitle": "الحل الكامل لإدارة ذكية للثروة الحيوانية. قم بتبسيط العمليات ومراقبة الصحة وزيادة الإنتاجية بكل سهولة.",
+    "getStarted": "ابدأ الآن",
+    "signIn": "تسجيل الدخول"
+  },
+  "MainLayout": {
+    "sidebar": {
+      "title": "RAII-AI",
+      "dashboard": "لوحة التحكم",
+      "animals": "الحيوانات",
+      "symptomChecker": "فاحص الأعراض",
+      "alerts": "التنبيهات",
+      "settings": "الإعدادات",
+      "forSale": "للبيع",
+      "admin": "مسؤول",
+      "inventory": "المخزون"
+    },
+    "userMenu": {
+      "guestUser": "مستخدم زائر",
+      "guestEmail": "guest@example.com",
+      "profile": "الملف الشخصي",
+      "settings": "الإعدادات",
+      "logout": "تسجيل الخروج"
+    }
+  },
+  "Dashboard": {
+    "title": "لوحة التحكم",
+    "activeAnimals": "الحيوانات النشطة",
+    "activeAnimalsSubtext": "مجموع الحيوانات في مزرعتك",
+    "milkToday": "متوسط الحليب اليومي (لتر)",
+    "milkTodaySubtext": "مجموع متوسط الإنتاج اليومي",
+    "vaccinationsDue": "التحصينات المستحقة",
+    "vaccinationsDueSubtext": "متأخرة أو في الأيام الـ 7 القادمة",
+    "openAlerts": "التنبيهات المفتوحة",
+    "openAlertsSubtext": "عبر جميع مزارعك",
+    "recentActivity": "النشاط الأخير",
+    "recentActivityPlaceholder": "سيظهر هنا موجز النشاط الأخير.",
+    "healthOverview": "نظرة عامة على الصحة",
+    "healthOverviewPlaceholder": "سيظهر هنا مخطط يوضح اتجاهات صحة الحيوان.",
+    "deceasedAnimals": "الحيوانات النافقة",
+    "deceasedAnimalsSubtext": "إجمالي النفوق المسجل",
+    "reproduction": "في مرحلة التكاثر",
+    "reproductionSubtext": "الحيوانات الحوامل في العام الماضي",
+    "animalsBySpecies": "الحيوانات حسب النوع",
+    "total": "المجموع"
+  },
+  "AnimalsPage": {
+    "title": "الحيوانات",
+    "description": "إدارة الثروة الحيوانية الخاصة بك هنا.",
+    "addAnimalButton": "إضافة حيوان",
+    "searchPlaceholder": "البحث عن طريق معرف الحيوان...",
+    "tableHeaders": {
+      "photo": "صورة",
+      "id": "معرف الحيوان",
+      "species": "النوع",
+      "breed": "السلالة",
+      "dob": "تاريخ الميلاد",
+      "gender": "الجنس",
+      "status": "الحالة",
+      "purpose": "الغرض",
+      "lastPregnancy": "آخر حمل",
+      "weight": "الوزن",
+      "production": "الإنتاج",
+      "sickness": "المرض",
+      "vaccinations": "التحصينات",
+      "actions": "الإجراءات"
+    },
+    "editAction": "تعديل",
+    "deleteAction": "حذف",
+    "consultationAction": "استشارة",
+    "addDialog": {
+      "title": "إضافة حيوان جديد",
+      "description": "املأ التفاصيل أدناه لإضافة حيوان جديد إلى سجلاتك.",
+      "addButton": "إضافة الحيوان"
+    },
+    "editDialog": {
+      "title": "تعديل الحيوان",
+      "description": "قم بتحديث تفاصيل الحيوان أدناه.",
+      "saveButton": "حفظ التغييرات"
+    },
+    "form": {
+      "id": {
+        "label": "معرف الحيوان",
+        "placeholder": "أدخل معرفًا فريدًا"
+      },
+      "species": {
+        "label": "النوع",
+        "placeholder": "اختر النوع"
+      },
+      "breed": {
+        "label": "السلالة",
+        "placeholder": "مثال: هولشتاين"
+      },
+      "dob": "تاريخ الميلاد",
+      "gender": {
+        "label": "الجنس",
+        "placeholder": "اختر الجنس"
+      },
+      "purpose": {
+        "label": "الغرض",
+        "placeholder": "اختر الغرض"
+      },
+      "lastPregnancy": "تاريخ آخر حمل",
+      "weight": {
+        "label": "الوزن",
+        "placeholder": "مثال: 500 كجم"
+      },
+      "monthlyProduction": {
+        "label": "الإنتاج الشهري",
+        "placeholder": "مثال: 800 لتر"
+      },
+      "sickness": {
+        "label": "المرض",
+        "placeholder": "أي مرض حالي"
+      },
+      "vaccinations": {
+        "label": "التحصينات",
+        "placeholder": "قائمة التحصينات والتواريخ"
+      },
+      "images": {
+        "label": "صورة",
+        "placeholder": "اختر صورة لتحميلها",
+        "description": "حمّل صورة للحيوان."
+      }
+    },
+    "cancelButton": "إلغاء"
+  },
+  "AnimalProfilePage": {
+    "title": "ملف الحيوان",
+    "description": "عرض وإدارة تفاصيل الحيوان والاستشارات.",
+    "animalDetails": "تفاصيل الحيوان",
+    "addConsultation": "إضافة استشارة",
+    "consultationHistory": "تاريخ الاستشارات",
+    "noConsultations": "لم يتم العثور على استشارات.",
+    "tableHeaders": {
+      "date": "التاريخ",
+      "type": "النوع",
+      "professional": "المختص",
+      "weight": "الوزن",
+      "production": "الإنتاج",
+      "health": "الصحة",
+      "repro": "التكاثر",
+      "vaccine": "اللقاح",
+      "notes": "ملاحظات"
+    },
+    "dialog": {
+      "title": "إضافة استشارة جديدة",
+      "description": "سجل تفاصيل الاستشارة أدناه.",
+      "professionalRole": {
+        "label": "دور المختص",
+        "placeholder": "اختر دورًا",
+        "vet": "طبيب بيطري",
+        "farmer": "مزارع"
+      },
+      "professionalName": {
+        "label": "اسم المختص"
+      },
+      "consultationType": {
+        "label": "نوع الاستشارة",
+        "placeholder": "اختر النوع",
+        "weight": "الوزن",
+        "production": "الإنتاج",
+        "healthStatus": "الحالة الصحية",
+        "reproduction": "التكاثر",
+        "vaccination": "التطعيم"
+      },
+      "weight": "الوزن (كجم)",
+      "production": "الإنتاج (لتر/شهر)",
+      "healthStatus": "الحالة الصحية",
+      "reproduction": "حالة التكاثر",
+      "vaccination": "تفاصيل التطعيم",
+      "notes": "ملاحظات",
+      "saveButton": "حفظ الاستشارة"
+    },
+    "toast": {
+      "success": {
+        "title": "تم حفظ الاستشارة",
+        "description": "تم تحديث سجل الحيوان بنجاح."
+      },
+      "error": {
+        "title": "فشل الحفظ",
+        "description": "لا يمكن حفظ الاستشارة."
+      }
+    }
+  },
+  "AnimalStatus": {
+    "Active": "نشط",
+    "Sold": "مباع",
+    "Deceased": "متوفى",
+    "ForSale": "للبيع"
+  },
+  "AnimalGender": {
+    "Female": "أنثى",
+    "Male": "ذكر"
+  },
+  "AnimalPurpose": {
+    "Meat": "لحم",
+    "Milk": "حليب",
+    "Other": "آخر"
+  },
+  "AnimalSpecies": {
+    "bovine": "أبقار",
+    "ovine": "أغنام",
+    "caprine": "ماعز",
+    "camelid": "جماليات",
+    "other": "آخر"
+  },
+  "SymptomCheckerPage": {
+    "metadata": {
+      "title": "فاحص الأعراض"
+    },
+    "title": "فاحص الأعراض",
+    "description": "صف نوع الحيوان وأعراضه للحصول على فرز أولي. هذه الأداة للأغراض الإعلامية فقط ولا تحل محل الاستشارة البيطرية المتخصصة."
+  },
+  "SymptomCheckerClient": {
+    "title": "فرز جديد",
+    "toast": {
+      "error": {
+        "title": "حدث خطأ",
+        "description": "يرجى المحاولة مرة أخرى لاحقًا."
+      }
+    },
+    "myAnimalTab": {
+      "title": "حيواني",
+      "form": {
+        "animal": {
+          "label": "الحيوان",
+          "placeholder": "اختر حيوانًا من سجلاتك"
+        }
+      }
+    },
+    "newTriageTab": {
+      "title": "فرز جديد",
+      "form": {
+        "species": {
+          "label": "النوع",
+          "placeholder": "اختر نوع الحيوان"
+        }
+      }
+    },
+    "shared": {
+      "form": {
+        "symptoms": {
+          "label": "الأعراض",
+          "placeholder": "مثال: خمول، فقدان شهية، سعال",
+          "description": "أدخل الأعراض، مفصولة بفواصل أو أسطر جديدة."
+        }
+      },
+      "submitButton": "تحليل الأعراض"
+    },
+    "loadingState": {
+      "title": "جاري التحليل...",
+      "description": "يقوم الذكاء الاصطناعي بمعالجة الأعراض. قد يستغرق هذا بعض الوقت."
+    },
+    "resultCard": {
+      "title": "تقرير الفرز",
+      "description": "بناءً على الأعراض المقدمة.",
+      "urgency": "إلحاح",
+      "likelyCauses": {
+        "title": "الأسباب المحتملة",
+        "confidence": "ثقة",
+        "none": "لم يتم تحديد أسباب محددة."
+      },
+      "recommendedActions": {
+        "title": "الإجراءات الموصى بها"
+      },
+      "disclaimer": {
+        "title": "إخلاء مسؤولية",
+        "description": "هذه ليست نصيحة طبية. استشر دائمًا طبيبًا بيطريًا مؤهلاً للتشخيص والعلاج."
+      }
+    },
+    "waitingState": {
+      "title": "في انتظار الإدخال",
+      "description": "املأ النموذج على اليسار للحصول على تحليل للأعراض."
+    }
+  },
+  "AlertsPage": {
+    "title": "التنبيهات",
+    "description": "عرض وإدارة التنبيهات لمزرعتك. هذه الميزة ستكون متاحة قريبًا."
+  },
+  "SettingsPage": {
+    "title": "الإعدادات",
+    "description": "إدارة حسابك والمظهر وتفضيلات اللغة.",
+    "profile": {
+      "title": "الملف الشخصي",
+      "description": "هكذا سيراك الآخرون على الموقع.",
+      "form": {
+        "firstName": { "label": "الاسم الأول", "placeholder": "أدخل اسمك الأول" },
+        "lastName": { "label": "اسم العائلة", "placeholder": "أدخل اسم عائلتك" },
+        "familyName": { "label": "اسم العائلة (تجاري)", "placeholder": "أدخل اسم عائلتك" },
+        "idCardNumber": { "label": "رقم بطاقة الهوية", "placeholder": "أدخل رقم بطاقة هويتك" },
+        "phoneNumber": { "label": "رقم الهاتف", "placeholder": "أدخل رقم هاتفك" },
+        "address": { "label": "العنوان", "placeholder": "أدخل عنوانك" },
+        "wilaya": { "label": "الولاية", "placeholder": "اختر ولايتك" },
+        "commune": { "label": "البلدية", "placeholder": "اختر بلديتك" },
+        "email": { "label": "البريد الإلكتروني" },
+        "saveButton": "حفظ التغييرات",
+        "savingButton": "جارٍ الحفظ..."
+      },
+       "changePassword": {
+        "title": "تغيير كلمة المرور",
+        "description": "قم بتحديث كلمة المرور الخاصة بك هنا. سيتم تسجيل خروجك بعد تغيير كلمة المرور بنجاح.",
+        "form": {
+          "oldPassword": { "label": "كلمة المرور القديمة" },
+          "newPassword": { "label": "كلمة المرور الجديدة" },
+          "confirmPassword": { "label": "تأكيد كلمة المرور الجديدة" },
+          "saveButton": "تحديث كلمة المرور",
+          "savingButton": "جاري التحديث..."
+        },
+        "toast": {
+          "success": {
+            "title": "تم تحديث كلمة المرور",
+            "description": "تم تغيير كلمة المرور الخاصة بك بنجاح. يرجى تسجيل الدخول مرة أخرى."
+          },
+          "error": {
+            "title": "فشل التحديث",
+            "description": "تعذر تحديث كلمة المرور. يرجى التحقق من كلمة المرور القديمة."
+          }
+        }
+      },
+      "toast": {
+        "success": {
+          "title": "تم تحديث الملف الشخصي",
+          "description": "تم تحديث ملفك الشخصي بنجاح."
+        },
+        "error": {
+          "title": "فشل التحديث",
+          "description": "لم نتمكن من تحديث ملفك الشخصي."
+        }
+      }
+    },
+    "appearance": {
+      "title": "المظهر",
+      "description": "تخصيص شكل وأسلوب التطبيق.",
+      "theme": {
+        "label": "السمة",
+        "placeholder": "اختر سمة",
+        "light": "فاتح",
+        "dark": "داكن",
+        "system": "النظام"
+      }
+    },
+    "language": {
+      "title": "اللغة",
+      "description": "اختر لغة التطبيق.",
+      "label": "اللغة",
+      "placeholder": "اختر لغة",
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
+    },
+    "manageVets": {
+      "title": "إدارة الأطباء البيطريين",
+      "description": "ابحث عن الأطباء البيطريين وقم بتعيينهم لمزرعتك.",
+      "assignedTitle": "الأطباء البيطريون المعينون",
+      "searchTitle": "تعيين طبيب بيطري جديد",
+      "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني...",
+      "searchButton": "بحث",
+      "searchingButton": "جارٍ البحث...",
+      "assignButton": "تعيين",
+      "removeButton": "إزالة",
+      "noAssignedVets": "لا يوجد أطباء بيطريون معينون حاليًا لهذه المزرعة.",
+      "noSearchResults": "لم يتم العثور على أطباء بيطريين يطابقون بحثك.",
+      "toast": {
+        "assignSuccess": {
+          "title": "تم تعيين الطبيب البيطري",
+          "description": "تم تعيين الطبيب البيطري بنجاح لمزرعتك."
+        },
+        "assignError": {
+          "title": "فشل التعيين",
+          "description": "تعذر تعيين الطبيب البيطري."
+        },
+        "removeSuccess": {
+          "title": "تمت إزالة الطبيب البيطري",
+          "description": "تمت إزالة الطبيب البيطري من مزرعتك."
+        },
+        "removeError": {
+          "title": "فشل الإزالة",
+          "description": "تعذرت إزالة الطبيب البيطري."
+        }
+      }
+    }
+  },
+  "ForSalePage": {
+    "title": "حيوانات للبيع",
+    "description": "تصفح الثروة الحيوانية المتاحة للشراء.",
+    "noImage": "لا توجد صورة متاحة",
+    "details": "تفاصيل",
+    "contactSeller": "اتصل بالبائع"
+  },
+  "Admin": {
+    "dashboard": {
+      "title": "لوحة تحكم المسؤول",
+      "description": "الإشراف على جميع المزارع والمستخدمين المسجلين.",
+      "farmList": {
+        "title": "كل المزارع",
+        "farmName": "اسم المزرعة",
+        "country": "البلد",
+        "locale": "اللغة"
+      }
+    },
+    "farmDetail": {
+        "description": "نظرة عامة مفصلة على المزرعة المحددة.",
+        "downloadCsv": "تنزيل CSV للحيوانات",
+        "users": {
+            "title": "المستخدمون المرتبطون"
+        },
+        "animals": {
+            "title": "جميع الحيوانات في المزرعة"
+        }
+    }
+  },
+  "LoginPage": {
+    "title": "تسجيل الدخول",
+    "description": "أدخل بريدك الإلكتروني أدناه لتسجيل الدخول إلى حسابك.",
+    "form": {
+      "email": {
+        "label": "البريد الإلكتروني",
+        "placeholder": "m@example.com"
+      },
+      "password": {
+        "label": "كلمة المرور"
+      }
+    },
+    "signInButton": "تسجيل الدخول",
+    "signingInButton": "جارٍ تسجيل الدخول...",
+    "dontHaveAccount": "ليس لديك حساب؟",
+    "signUpLink": "التسجيل",
+    "toast": {
+      "success": {
+        "title": "تم تسجيل الدخول بنجاح",
+        "description": "مرحباً بعودتك!"
+      },
+      "error": {
+        "title": "فشل تسجيل الدخول",
+        "credentials": "يرجى التحقق من بيانات الاعتماد الخاصة بك وحاول مرة أخرى.",
+        "serviceUnavailable": "خدمة المصادقة غير متوفرة. يرجى المحاولة مرة أخرى في وقت لاحق."
+      }
+    }
+  },
+    "SignupPage": {
+    "title": "التسجيل في RAII-AI",
+    "mission": "تبسيط إدارة الثروة الحيوانية.",
+    "description": "أدخل معلوماتك لإنشاء حساب.",
+    "createAccountButton": "إنشاء حساب",
+    "creatingAccountButton": "جاري إنشاء الحساب...",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "loginLink": "تسجيل الدخول",
+    "role": {
+      "label": "أنا...",
+      "placeholder": "اختر دورك",
+      "owner": "صاحب مزرعة",
+      "vet": "طبيب بيطري"
+    },
+    "form": {
+        "firstName": { "label": "الاسم الأول", "placeholder": "مثال: جون" },
+        "lastName": { "label": "اسم العائلة", "placeholder": "مثال: دو" },
+        "familyName": { "label": "اسم العائلة (تجاري)", "placeholder": "الاسم العائلي أو التجاري لمزرعتك" },
+        "idCardNumber": { "label": "رقم بطاقة الهوية", "placeholder": "بطاقة المزارع أو الهوية الرسمية" },
+        "farmName": { "label": "اسم المزرعة", "placeholder": "اسم المزرعة التي تعمل معها" },
+        "phoneNumber": { "label": "رقم الهاتف", "placeholder": "+213 (555) 000-000" },
+        "address": { "label": "العنوان", "placeholder": "123 الشارع الرئيسي" },
+        "wilaya": { "label": "الولاية", "placeholder": "اختر الولاية" },
+        "commune": { "label": "البلدية", "placeholder": "اختر البلدية" },
+        "email": { "label": "البريد الإلكتروني", "placeholder": "m@example.com" },
+        "password": { "label": "كلمة المرور" }
+    },
+    "toast": {
+      "success": {
+        "title": "تم التسجيل بنجاح",
+        "description": "لقد أنشأنا حسابك لك."
+      },
+      "error": {
+        "title": "فشل التسجيل",
+        "description": "خدمة قاعدة البيانات غير متاحة. يرجى المحاولة مرة أخرى في وقت لاحق."
+      }
+    }
+  }
+}
+
+    

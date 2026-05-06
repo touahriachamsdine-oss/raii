@@ -1,0 +1,805 @@
+{
+  "entities": {
+    "Farm": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Farm",
+      "type": "object",
+      "description": "Represents a farm with its location and settings.",
+      "properties": {
+        "farmId": {
+          "type": "string",
+          "description": "Unique identifier for the farm."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the farm."
+        },
+        "country": {
+          "type": "string",
+          "description": "Country where the farm is located."
+        },
+        "locale": {
+          "type": "string",
+          "description": "Locale of the farm (e.g., en-US)."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Timezone of the farm (e.g., America/Los_Angeles)."
+        }
+      },
+      "required": [
+        "farmId",
+        "name",
+        "country",
+        "locale",
+        "timezone"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the application with roles and farm access.",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the user, typically first and last name."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the user."
+        },
+        "familyName": {
+          "type": "string",
+          "description": "Family name, typically for farm owners."
+        },
+        "wilaya": {
+          "type": "string",
+          "description": "The wilaya (province) of the user."
+        },
+        "commune": {
+          "type": "string",
+          "description": "The commune (municipality) of the user."
+        },
+        "address": {
+          "type": "string",
+          "description": "The user's physical address."
+        },
+        "idCardNumber": {
+          "type": "string",
+          "description": "Identification card number, typically for farm owners."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address, used for login.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of the user (e.g., admin, vet, owner)."
+        },
+        "farmIds": {
+          "type": "array",
+          "description": "References to Farms. (Relationship: Farm 1:N User)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "email",
+        "role",
+        "farmIds"
+      ]
+    },
+    "Animal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Animal",
+      "type": "object",
+      "description": "Represents an animal in the farm.",
+      "properties": {
+        "animalId": {
+          "type": "string",
+          "description": "Unique identifier for the animal."
+        },
+        "farmId": {
+          "type": "string",
+          "description": "Reference to Farm. (Relationship: Farm 1:N Animal)"
+        },
+        "tagId": {
+          "type": "string",
+          "description": "RFID tag identifier for the animal."
+        },
+        "altIds": {
+          "type": "array",
+          "description": "Alternative identifiers for the animal.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "species": {
+          "type": "string",
+          "description": "Species of the animal (e.g., bovine, ovine, camelid)."
+        },
+        "breed": {
+          "type": "string",
+          "description": "Breed of the animal."
+        },
+        "sex": {
+          "type": "string",
+          "description": "Sex of the animal."
+        },
+        "dob": {
+          "type": "string",
+          "description": "Date of birth of the animal.",
+          "format": "date-time"
+        },
+        "ageMonths": {
+          "type": "number",
+          "description": "Age of the animal in months (derived)."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the animal (e.g., active, sold, deceased)."
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "URL of the animal's photo."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the animal."
+        },
+        "lastPregnancyDate": {
+          "type": "string",
+          "description": "Date of the animal's last pregnancy.",
+          "format": "date-time"
+        },
+        "lactationStage": {
+          "type": "string",
+          "description": "Lactation stage of the animal."
+        },
+        "currentWeightKg": {
+          "type": "number",
+          "description": "Current weight of the animal in kilograms."
+        },
+        "milkYieldAvgL": {
+          "type": "number",
+          "description": "Average milk yield of the animal in liters."
+        },
+        "meatGrade": {
+          "type": "string",
+          "description": "Meat grade of the animal."
+        },
+        "vaccinationDueOn": {
+          "type": "string",
+          "description": "Date when the next vaccination is due.",
+          "format": "date-time"
+        },
+        "healthFlags": {
+          "type": "array",
+          "description": "Health flags associated with the animal.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of the last update.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "animalId",
+        "farmId",
+        "tagId",
+        "species",
+        "breed",
+        "sex"
+      ]
+    },
+    "ForSaleAnimal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ForSaleAnimal",
+      "type": "object",
+      "description": "Represents a denormalized animal that is for sale.",
+      "properties": {
+        "animalId": {
+          "type": "string"
+        },
+        "farmId": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "breed": {
+          "type": "string"
+        },
+        "dob": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "animalId",
+        "farmId",
+        "species",
+        "breed",
+        "dob",
+        "gender",
+        "purpose"
+      ]
+    },
+    "Event": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Event",
+      "type": "object",
+      "description": "Represents an event related to an animal.",
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "description": "Unique identifier for the event."
+        },
+        "animalId": {
+          "type": "string",
+          "description": "Reference to Animal. (Relationship: Animal 1:N Event)"
+        },
+        "farmId": {
+          "type": "string",
+          "description": "Reference to Farm. (Relationship: Farm 1:N Event)"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the event (e.g., scan, intake, milk)."
+        },
+        "values": {
+          "type": "string",
+          "description": "Values associated with the event."
+        },
+        "occurredAt": {
+          "type": "string",
+          "description": "Timestamp when the event occurred.",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "User who created the event."
+        }
+      },
+      "required": [
+        "eventId",
+        "animalId",
+        "farmId",
+        "type",
+        "values",
+        "occurredAt",
+        "createdBy"
+      ]
+    },
+    "Consultation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Consultation",
+      "type": "object",
+      "description": "Represents a consultation for an animal.",
+      "properties": {
+        "consultationId": {
+          "type": "string"
+        },
+        "animalId": {
+          "type": "string"
+        },
+        "farmId": {
+          "type": "string"
+        },
+        "professionalRole": {
+          "type": "string",
+          "enum": [
+            "Veterinarian",
+            "Farmer"
+          ]
+        },
+        "professionalName": {
+          "type": "string"
+        },
+        "consultationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "consultationType": {
+          "type": "string",
+          "enum": [
+            "Weight",
+            "Production",
+            "Health Status",
+            "Reproduction",
+            "Vaccination"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "string"
+        },
+        "production": {
+          "type": "string"
+        },
+        "healthStatus": {
+          "type": "string"
+        },
+        "reproduction": {
+          "type": "string"
+        },
+        "vaccination": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "consultationId",
+        "animalId",
+        "farmId",
+        "professionalRole",
+        "professionalName",
+        "consultationDate",
+        "consultationType"
+      ]
+    },
+    "HealthRecord": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "HealthRecord",
+      "type": "object",
+      "description": "Represents a health record for an animal.",
+      "properties": {
+        "recId": {
+          "type": "string",
+          "description": "Unique identifier for the health record."
+        },
+        "animalId": {
+          "type": "string",
+          "description": "Reference to Animal. (Relationship: Animal 1:N HealthRecord)"
+        },
+        "farmId": {
+          "type": "string",
+          "description": "Reference to Farm. (Relationship: Farm 1:N HealthRecord)"
+        },
+        "diagnosis": {
+          "type": "string",
+          "description": "Diagnosis for the animal's health condition."
+        },
+        "symptoms": {
+          "type": "array",
+          "description": "Symptoms exhibited by the animal.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "severity": {
+          "type": "string",
+          "description": "Severity of the health condition (e.g., low, med, high)."
+        },
+        "treatment": {
+          "type": "string",
+          "description": "Treatment provided to the animal."
+        },
+        "vetId": {
+          "type": "string",
+          "description": "Reference to User (Veterinarian). (Relationship: User 1:N HealthRecord)"
+        },
+        "recordedAt": {
+          "type": "string",
+          "description": "Timestamp when the health record was recorded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "recId",
+        "animalId",
+        "farmId",
+        "diagnosis",
+        "symptoms",
+        "severity",
+        "treatment",
+        "vetId",
+        "recordedAt"
+      ]
+    },
+    "Vaccination": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Vaccination",
+      "type": "object",
+      "description": "Represents a vaccination record for an animal.",
+      "properties": {
+        "vxId": {
+          "type": "string",
+          "description": "Unique identifier for the vaccination record."
+        },
+        "animalId": {
+          "type": "string",
+          "description": "Reference to Animal. (Relationship: Animal 1:N Vaccination)"
+        },
+        "farmId": {
+          "type": "string",
+          "description": "Reference to Farm. (Relationship: Farm 1:N Vaccination)"
+        },
+        "vaccineName": {
+          "type": "string",
+          "description": "Name of the vaccine."
+        },
+        "doseMl": {
+          "type": "number",
+          "description": "Dosage of the vaccine in milliliters."
+        },
+        "route": {
+          "type": "string",
+          "description": "Route of administration for the vaccine."
+        },
+        "givenAt": {
+          "type": "string",
+          "description": "Timestamp when the vaccination was given.",
+          "format": "date-time"
+        },
+        "nextDueAt": {
+          "type": "string",
+          "description": "Timestamp when the next vaccination is due.",
+          "format": "date-time"
+        },
+        "givenBy": {
+          "type": "string",
+          "description": "Reference to User (Veterinarian/Worker). (Relationship: User 1:N Vaccination)"
+        }
+      },
+      "required": [
+        "vxId",
+        "animalId",
+        "farmId",
+        "vaccineName",
+        "doseMl",
+        "route",
+        "givenAt",
+        "nextDueAt",
+        "givenBy"
+      ]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Message",
+      "type": "object",
+      "description": "Represents a message in a chat thread.",
+      "properties": {
+        "msgId": {
+          "type": "string",
+          "description": "Unique identifier for the message."
+        },
+        "threadId": {
+          "type": "string",
+          "description": "Unique identifier for the thread containing this message."
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of the message sender (e.g., user, assistant, system)."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species related to the message (context for symptom checker)."
+        },
+        "symptoms": {
+          "type": "array",
+          "description": "Symptoms described in the message.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "Suggested diagnosis or action from the assistant."
+        },
+        "confidence": {
+          "type": "number",
+          "description": "Confidence level of the suggestion."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the message was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "msgId",
+        "threadId",
+        "role",
+        "createdAt"
+      ]
+    },
+    "Alert": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Alert",
+      "type": "object",
+      "description": "Represents an alert for a specific event or condition.",
+      "properties": {
+        "alertId": {
+          "type": "string",
+          "description": "Unique identifier for the alert."
+        },
+        "farmId": {
+          "type": "string",
+          "description": "Reference to Farm. (Relationship: Farm 1:N Alert)"
+        },
+        "animalId": {
+          "type": "string",
+          "description": "Reference to Animal. (Relationship: Animal 1:N Alert)"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of alert (e.g., vaccination due, sickness)."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the alert."
+        },
+        "dueAt": {
+          "type": "string",
+          "description": "Timestamp when the alert is due.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the alert (e.g., open, ack, closed)."
+        }
+      },
+      "required": [
+        "alertId",
+        "farmId",
+        "animalId",
+        "type",
+        "title",
+        "dueAt",
+        "status"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/farms/{farmId}",
+        "definition": {
+          "entityName": "Farm",
+          "schema": {
+            "$ref": "#/backend/entities/Farm"
+          },
+          "description": "Stores farm information. The farmId is used as the document ID.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user information, including the user's role and the farm IDs they have access to. The userId is used as the document ID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user (UID from Firebase Auth)."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/for_sale/{animalId}",
+        "definition": {
+          "entityName": "ForSaleAnimal",
+          "schema": {
+            "$ref": "#/backend/entities/ForSaleAnimal"
+          },
+          "description": "Stores denormalized animal data for public browsing. The animalId is the document ID.",
+          "params": [
+            {
+              "name": "animalId",
+              "description": "The unique identifier of the animal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farms/{farmId}/animals/{animalId}",
+        "definition": {
+          "entityName": "Animal",
+          "schema": {
+            "$ref": "#/backend/entities/Animal"
+          },
+          "description": "Stores animal information, nested under the farm. Includes farmId for denormalization and efficient querying.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            },
+            {
+              "name": "animalId",
+              "description": "The unique identifier of the animal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farms/{farmId}/animals/{animalId}/events/{eventId}",
+        "definition": {
+          "entityName": "Event",
+          "schema": {
+            "$ref": "#/backend/entities/Event"
+          },
+          "description": "Stores events related to an animal, nested under the animal and farm. Includes farmId for denormalization and efficient querying.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            },
+            {
+              "name": "animalId",
+              "description": "The unique identifier of the animal."
+            },
+            {
+              "name": "eventId",
+              "description": "The unique identifier of the event."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farms/{farmId}/animals/{animalId}/consultations/{consultationId}",
+        "definition": {
+          "entityName": "Consultation",
+          "schema": {
+            "$ref": "#/backend/entities/Consultation"
+          },
+          "description": "Stores consultation records for an animal, nested under the animal and farm. Includes farmId for denormalization and efficient querying.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            },
+            {
+              "name": "animalId",
+              "description": "The unique identifier of the animal."
+            },
+            {
+              "name": "consultationId",
+              "description": "The unique identifier of the consultation."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farms/{farmId}/animals/{animalId}/health_records/{recId}",
+        "definition": {
+          "entityName": "HealthRecord",
+          "schema": {
+            "$ref": "#/backend/entities/HealthRecord"
+          },
+          "description": "Stores health records for an animal, nested under the animal and farm. Includes farmId for denormalization and efficient querying.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            },
+            {
+              "name": "animalId",
+              "description": "The unique identifier of the animal."
+            },
+            {
+              "name": "recId",
+              "description": "The unique identifier of the health record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farms/{farmId}/animals/{animalId}/vaccinations/{vxId}",
+        "definition": {
+          "entityName": "Vaccination",
+          "schema": {
+            "$ref": "#/backend/entities/Vaccination"
+          },
+          "description": "Stores vaccination records for an animal, nested under the animal and farm. Includes farmId for denormalization and efficient querying.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            },
+            {
+              "name": "animalId",
+              "description": "The unique identifier of the animal."
+            },
+            {
+              "name": "vxId",
+              "description": "The unique identifier of the vaccination."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/messages/{threadId}/items/{msgId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/backend/entities/Message"
+          },
+          "description": "Stores messages in a chat thread. Messages are grouped under threadId.",
+          "params": [
+            {
+              "name": "threadId",
+              "description": "The unique identifier of the chat thread."
+            },
+            {
+              "name": "msgId",
+              "description": "The unique identifier of the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farms/{farmId}/alerts/{alertId}",
+        "definition": {
+          "entityName": "Alert",
+          "schema": {
+            "$ref": "#/backend/entities/Alert"
+          },
+          "description": "Stores alerts related to a farm. Includes farmId for denormalization and efficient querying.",
+          "params": [
+            {
+              "name": "farmId",
+              "description": "The unique identifier of the farm."
+            },
+            {
+              "name": "alertId",
+              "description": "The unique identifier of the alert."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. Authorization Independence is achieved through denormalization of farmIds into the User document, eliminating the need for `get()` calls in security rules. The structure segregates data based on ownership and access requirements, enhancing security and simplifying rules. A denormalized `for_sale` collection is introduced to simplify public queries for animals for sale, avoiding complex and insecure collection group queries in security rules. Access control is enforced by leveraging path-based ownership for user-specific data and a membership map approach (via the user.farmIds array) for collaborative data. Explicit state modeling is used with a dedicated `status` field for entities like `Animal` and `Alert`. This approach ensures that list operations are secure, as rules can be written to filter data based on the denormalized `farmId` and user roles without needing to read other documents. The structure uses hierarchical paths to represent the relationships between entities (e.g., `/users/{userId}/farms/{farmId}/animals/{animalId}`), facilitating simple and efficient security rules based on ownership and role. The design also promotes data clarity and predictability by using explicit state modeling, a predictable schema, and consistent naming conventions."
+  }
+}

@@ -1,0 +1,491 @@
+
+{
+  "Metadata": {
+    "title": {
+      "default": "RAII-AI",
+      "template": "%s | RAII-AI"
+    },
+    "description": "Gestion intelligente du bétail."
+  },
+  "LandingPage": {
+    "title": "Bienvenue sur RAII-AI",
+    "subtitle": "Votre solution complète pour une gestion intelligente du bétail. Simplifiez les opérations, surveillez la santé et augmentez la productivité en toute simplicité.",
+    "getStarted": "Commencer",
+    "signIn": "Se Connecter"
+  },
+  "MainLayout": {
+    "sidebar": {
+      "title": "RAII-AI",
+      "dashboard": "Tableau de Bord",
+      "animals": "Animaux",
+      "symptomChecker": "Vérificateur de Symptômes",
+      "alerts": "Alertes",
+      "settings": "Paramètres",
+      "forSale": "À Vendre",
+      "admin": "Admin",
+      "inventory": "Inventaire"
+    },
+    "userMenu": {
+      "guestUser": "Utilisateur Invité",
+      "guestEmail": "invite@example.com",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "logout": "Se déconnecter"
+    }
+  },
+  "Dashboard": {
+    "title": "Tableau de Bord",
+    "activeAnimals": "Animaux Actifs",
+    "activeAnimalsSubtext": "Total des animaux dans votre ferme",
+    "milkToday": "Lait Quotidien Moy. (L)",
+    "milkTodaySubtext": "Somme du rendement quotidien moyen",
+    "vaccinationsDue": "Vaccinations Dues",
+    "vaccinationsDueSubtext": "En retard ou dans les 7 prochains jours",
+    "openAlerts": "Alertes Ouvertes",
+    "openAlertsSubtext": "Dans toutes vos fermes",
+    "recentActivity": "Activité Récente",
+    "recentActivityPlaceholder": "Le fil d'activité récente ira ici.",
+    "healthOverview": "Aperçu de la Santé",
+    "healthOverviewPlaceholder": "Un graphique montrant les tendances de santé des animaux ira ici.",
+    "deceasedAnimals": "Animaux Décédés",
+    "deceasedAnimalsSubtext": "Total des décès enregistrés",
+    "reproduction": "En Reproduction",
+    "reproductionSubtext": "Animaux gestants l'année dernière",
+    "animalsBySpecies": "Animaux par Espèce",
+    "total": "Total"
+  },
+  "AnimalsPage": {
+    "title": "Animaux",
+    "description": "Gérez votre bétail ici.",
+    "addAnimalButton": "Ajouter un Animal",
+    "searchPlaceholder": "Rechercher par ID d'animal...",
+    "tableHeaders": {
+      "photo": "Photo",
+      "id": "ID Animal",
+      "species": "Espèce",
+      "breed": "Race",
+      "dob": "Date de Naiss.",
+      "gender": "Sexe",
+      "status": "Statut",
+      "purpose": "Usage",
+      "lastPregnancy": "Dernière Gestation",
+      "weight": "Poids",
+      "production": "Production",
+      "sickness": "Maladie",
+      "vaccinations": "Vaccinations",
+      "actions": "Actions"
+    },
+    "editAction": "Modifier",
+    "deleteAction": "Supprimer",
+    "consultationAction": "Consultation",
+    "addDialog": {
+      "title": "Ajouter un Nouvel Animal",
+      "description": "Remplissez les détails ci-dessous pour ajouter un nouvel animal à vos dossiers.",
+      "addButton": "Ajouter l'Animal"
+    },
+    "editDialog": {
+      "title": "Modifier l'Animal",
+      "description": "Mettez à jour les détails de l'animal ci-dessous.",
+      "saveButton": "Enregistrer les Modifications"
+    },
+    "form": {
+      "id": {
+        "label": "ID de l'animal",
+        "placeholder": "Entrez un ID unique"
+      },
+      "species": {
+        "label": "Espèce",
+        "placeholder": "Sélectionner l'espèce"
+      },
+      "breed": {
+        "label": "Race",
+        "placeholder": "ex: Holstein"
+      },
+      "dob": "Date de Naissance",
+      "gender": {
+        "label": "Sexe",
+        "placeholder": "Sélectionner le sexe"
+      },
+      "purpose": {
+        "label": "Usage",
+        "placeholder": "Sélectionner l'usage"
+      },
+      "lastPregnancy": "Date de la Dernière Gestation",
+      "weight": {
+        "label": "Poids",
+        "placeholder": "ex: 500 kg"
+      },
+      "monthlyProduction": {
+        "label": "Production Mensuelle",
+        "placeholder": "ex: 800 L"
+      },
+      "sickness": {
+        "label": "Maladie",
+        "placeholder": "Toute maladie actuelle"
+      },
+      "vaccinations": {
+        "label": "Vaccinations",
+        "placeholder": "Liste des vaccinations et des dates"
+      },
+      "images": {
+        "label": "Photo",
+        "placeholder": "Choisissez une image à télécharger",
+        "description": "Téléchargez une photo pour cet animal."
+      }
+    },
+    "cancelButton": "Annuler"
+  },
+  "AnimalProfilePage": {
+    "title": "Profil de l'Animal",
+    "description": "Visualisez et gérez les détails et les consultations de l'animal.",
+    "animalDetails": "Détails de l'Animal",
+    "addConsultation": "Ajouter une Consultation",
+    "consultationHistory": "Historique des Consultations",
+    "noConsultations": "Aucune consultation trouvée.",
+    "tableHeaders": {
+      "date": "Date",
+      "type": "Type",
+      "professional": "Professionnel",
+      "weight": "Poids",
+      "production": "Production",
+      "health": "Santé",
+      "repro": "Repro",
+      "vaccine": "Vaccin",
+      "notes": "Notes"
+    },
+    "dialog": {
+      "title": "Ajouter une Nouvelle Consultation",
+      "description": "Enregistrez les détails de la consultation ci-dessous.",
+      "professionalRole": {
+        "label": "Rôle du Professionnel",
+        "placeholder": "Sélectionnez un rôle",
+        "vet": "Vétérinaire",
+        "farmer": "Agriculteur"
+      },
+      "professionalName": {
+        "label": "Nom du Professionnel"
+      },
+      "consultationType": {
+        "label": "Type de Consultation",
+        "placeholder": "Sélectionnez le type",
+        "weight": "Poids",
+        "production": "Production",
+        "healthStatus": "État de Santé",
+        "reproduction": "Reproduction",
+        "vaccination": "Vaccination"
+      },
+      "weight": "Poids (kg)",
+      "production": "Production (L/mois)",
+      "healthStatus": "État de Santé",
+      "reproduction": "Statut de Reproduction",
+      "vaccination": "Détails de la Vaccination",
+      "notes": "Notes",
+      "saveButton": "Enregistrer la Consultation"
+    },
+    "toast": {
+      "success": {
+        "title": "Consultation Enregistrée",
+        "description": "Le dossier de l'animal a été mis à jour avec succès."
+      },
+      "error": {
+        "title": "Échec de l'Enregistrement",
+        "description": "Impossible d'enregistrer la consultation."
+      }
+    }
+  },
+  "AnimalStatus": {
+    "Active": "Actif",
+    "Sold": "Vendu",
+    "Deceased": "Décédé",
+    "ForSale": "À Vendre"
+  },
+  "AnimalGender": {
+    "Female": "Femelle",
+    "Male": "Mâle"
+  },
+  "AnimalPurpose": {
+    "Meat": "Viande",
+    "Milk": "Lait",
+    "Other": "Autre"
+  },
+  "AnimalSpecies": {
+    "bovine": "Bovin",
+    "ovine": "Ovin",
+    "caprine": "Caprin",
+    "camelid": "Camélidé",
+    "other": "Autre"
+  },
+  "SymptomCheckerPage": {
+    "metadata": {
+      "title": "Vérificateur de Symptômes"
+    },
+    "title": "Vérificateur de Symptômes",
+    "description": "Décrivez l'espèce et les symptômes de l'animal pour obtenir un triage préliminaire. Cet outil est à titre informatif uniquement et ne remplace pas un avis vétérinaire professionnel."
+  },
+  "SymptomCheckerClient": {
+    "title": "Nouveau Triage",
+    "toast": {
+      "error": {
+        "title": "Une erreur est survenue",
+        "description": "Veuillez réessayer plus tard."
+      }
+    },
+    "myAnimalTab": {
+      "title": "Mon Animal",
+      "form": {
+        "animal": {
+          "label": "Animal",
+          "placeholder": "Sélectionnez un animal de vos dossiers"
+        }
+      }
+    },
+    "newTriageTab": {
+      "title": "Nouveau Triage",
+      "form": {
+        "species": {
+          "label": "Espèce",
+          "placeholder": "Sélectionner l'espèce de l'animal"
+        }
+      }
+    },
+    "shared": {
+      "form": {
+        "symptoms": {
+          "label": "Symptômes",
+          "placeholder": "ex: Léthargie, perte d'appétit, toux",
+          "description": "Entrez les symptômes, séparés par des virgules ou de nouvelles lignes."
+        }
+      },
+      "submitButton": "Analyser les Symptômes"
+    },
+    "loadingState": {
+      "title": "Analyse en cours...",
+      "description": "L'IA traite les symptômes. Cela peut prendre un moment."
+    },
+    "resultCard": {
+      "title": "Rapport de Triage",
+      "description": "Basé sur les symptômes fournis.",
+      "urgency": "Urgence",
+      "likelyCauses": {
+        "title": "Causes Probables",
+        "confidence": "Confiance",
+        "none": "Aucune cause spécifique identifiée."
+      },
+      "recommendedActions": {
+        "title": "Actions Recommandées"
+      },
+      "disclaimer": {
+        "title": "Avis de non-responsabilité",
+        "description": "Ceci n'est pas un avis médical. Consultez toujours un vétérinaire qualifié pour le diagnostic et le traitement."
+      }
+    },
+    "waitingState": {
+      "title": "En attente d'entrée",
+      "description": "Remplissez le formulaire à gauche pour obtenir une analyse des symptômes."
+    }
+  },
+  "AlertsPage": {
+    "title": "Alertes",
+    "description": "Visualisez et gérez les alertes pour votre ferme. Cette fonctionnalité sera bientôt disponible."
+  },
+  "SettingsPage": {
+    "title": "Paramètres",
+    "description": "Gérez votre compte, l'apparence et les préférences linguistiques.",
+    "profile": {
+      "title": "Profil",
+      "description": "C'est ainsi que les autres vous verront sur le site.",
+       "form": {
+        "firstName": { "label": "Prénom", "placeholder": "Entrez votre prénom" },
+        "lastName": { "label": "Nom de famille", "placeholder": "Entrez votre nom de famille" },
+        "familyName": { "label": "Nom de Famille (Commerce)", "placeholder": "Entrez votre nom de famille" },
+        "idCardNumber": { "label": "Numéro de carte d'identité", "placeholder": "Entrez votre numéro de carte d'identité" },
+        "phoneNumber": { "label": "Numéro de téléphone", "placeholder": "Entrez votre numéro de téléphone" },
+        "address": { "label": "Adresse", "placeholder": "Entrez votre adresse" },
+        "wilaya": { "label": "Wilaya", "placeholder": "Sélectionnez votre Wilaya" },
+        "commune": { "label": "Commune", "placeholder": "Sélectionnez votre Commune" },
+        "email": { "label": "E-mail" },
+        "saveButton": "Enregistrer les modifications",
+        "savingButton": "Enregistrement..."
+      },
+      "changePassword": {
+        "title": "Changer le mot de passe",
+        "description": "Mettez à jour votre mot de passe ici. Vous serez déconnecté après un changement de mot de passe réussi.",
+        "form": {
+          "oldPassword": { "label": "Ancien mot de passe" },
+          "newPassword": { "label": "Nouveau mot de passe" },
+          "confirmPassword": { "label": "Confirmer le nouveau mot de passe" },
+          "saveButton": "Mettre à jour le mot de passe",
+          "savingButton": "Mise à jour..."
+        },
+        "toast": {
+          "success": {
+            "title": "Mot de passe mis à jour",
+            "description": "Votre mot de passe a été changé avec succès. Veuillez vous reconnecter."
+          },
+          "error": {
+            "title": "Échec de la mise à jour",
+            "description": "Impossible de mettre à jour votre mot de passe. Veuillez vérifier votre ancien mot de passe."
+          }
+        }
+      },
+      "toast": {
+        "success": {
+          "title": "Profil mis à jour",
+          "description": "Votre profil a été mis à jour avec succès."
+        },
+        "error": {
+          "title": "Échec de la mise à jour",
+          "description": "Impossible de mettre à jour votre profil."
+        }
+      }
+    },
+    "appearance": {
+      "title": "Apparence",
+      "description": "Personnalisez l'aspect de l'application.",
+      "theme": {
+        "label": "Thème",
+        "placeholder": "Sélectionnez un thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+      }
+    },
+    "language": {
+      "title": "Langue",
+      "description": "Choisissez la langue de l'application.",
+      "label": "Langue",
+      "placeholder": "Sélectionnez une langue",
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
+    },
+     "manageVets": {
+      "title": "Gérer les Vétérinaires",
+      "description": "Trouvez et assignez des vétérinaires à votre ferme.",
+      "assignedTitle": "Vétérinaires Assignés",
+      "searchTitle": "Assigner un Nouveau Vétérinaire",
+      "searchPlaceholder": "Rechercher par nom ou e-mail...",
+      "searchButton": "Rechercher",
+      "searchingButton": "Recherche...",
+      "assignButton": "Assigner",
+      "removeButton": "Retirer",
+      "noAssignedVets": "Aucun vétérinaire n'est actuellement assigné à cette ferme.",
+      "noSearchResults": "Aucun vétérinaire ne correspond à votre recherche.",
+      "toast": {
+        "assignSuccess": {
+          "title": "Vétérinaire Assigné",
+          "description": "Le vétérinaire a été assigné avec succès à votre ferme."
+        },
+        "assignError": {
+          "title": "Échec de l'Assignation",
+          "description": "Impossible d'assigner le vétérinaire."
+        },
+        "removeSuccess": {
+          "title": "Vétérinaire Retiré",
+          "description": "Le vétérinaire a été retiré de votre ferme."
+        },
+        "removeError": {
+          "title": "Échec de la Suppression",
+          "description": "Impossible de retirer le vétérinaire."
+        }
+      }
+    }
+  },
+  "ForSalePage": {
+    "title": "Animaux à Vendre",
+    "description": "Parcourez le bétail disponible à l'achat.",
+    "noImage": "Aucune image disponible",
+    "details": "Détails",
+    "contactSeller": "Contacter le Vendeur"
+  },
+  "Admin": {
+    "dashboard": {
+      "title": "Tableau de Bord Admin",
+      "description": "Supervisez toutes les fermes et tous les utilisateurs enregistrés.",
+      "farmList": {
+        "title": "Toutes les Fermes",
+        "farmName": "Nom de la Ferme",
+        "country": "Pays",
+        "locale": "Locale"
+      }
+    },
+    "farmDetail": {
+        "description": "Aperçu détaillé de la ferme sélectionnée.",
+        "downloadCsv": "Télécharger CSV Animaux",
+        "users": {
+            "title": "Utilisateurs Associés"
+        },
+        "animals": {
+            "title": "Tous les Animaux de la Ferme"
+        }
+    }
+  },
+  "LoginPage": {
+    "title": "Se connecter",
+    "description": "Entrez votre e-mail ci-dessous pour vous connecter à votre compte.",
+    "form": {
+      "email": {
+        "label": "E-mail",
+        "placeholder": "m@example.com"
+      },
+      "password": {
+        "label": "Mot de passe"
+      }
+    },
+    "signInButton": "Se connecter",
+    "signingInButton": "Connexion...",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "signUpLink": "S'inscrire",
+    "toast": {
+      "success": {
+        "title": "Connexion réussie",
+        "description": "Bon retour parmi nous !"
+      },
+      "error": {
+        "title": "Échec de la connexion",
+        "credentials": "Veuillez vérifier vos identifiants et réessayer.",
+        "serviceUnavailable": "Le service d'authentification n'est pas disponible. Veuillez réessayer plus tard."
+      }
+    }
+  },
+  "SignupPage": {
+    "title": "S'inscrire à RAII-AI",
+    "mission": "Rationaliser la gestion du bétail.",
+    "description": "Entrez vos informations pour créer un compte.",
+    "createAccountButton": "Créer un compte",
+    "creatingAccountButton": "Création du compte...",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "loginLink": "Se connecter",
+    "role": {
+      "label": "Je suis un...",
+      "placeholder": "Sélectionnez votre rôle",
+      "owner": "Propriétaire de Ferme",
+      "vet": "Vétérinaire"
+    },
+    "form": {
+        "firstName": { "label": "Prénom", "placeholder": "ex: Jean" },
+        "lastName": { "label": "Nom de famille", "placeholder": "ex: Dupont" },
+        "familyName": { "label": "Nom de Famille (Commerce)", "placeholder": "Le nom de famille ou nom commercial de votre ferme" },
+        "idCardNumber": { "label": "Numéro de carte d'identité", "placeholder": "Carte d'agriculteur ou pièce d'identité officielle" },
+        "farmName": { "label": "Nom de la Ferme", "placeholder": "Le nom de la ferme avec laquelle vous travaillez" },
+        "phoneNumber": { "label": "Numéro de téléphone", "placeholder": "+33 6 00 00 00 00" },
+        "address": { "label": "Adresse", "placeholder": "123 Rue Principale" },
+        "wilaya": { "label": "Wilaya", "placeholder": "Sélectionnez la Wilaya" },
+        "commune": { "label": "Commune", "placeholder": "Sélectionnez la Commune" },
+        "email": { "label": "Adresse E-mail", "placeholder": "m@example.com" },
+        "password": { "label": "Mot de passe" }
+    },
+    "toast": {
+      "success": {
+        "title": "Inscription réussie",
+        "description": "Nous avons créé votre compte pour vous."
+      },
+      "error": {
+        "title": "Échec de l'inscription",
+        "description": "Le service de base de données n'est pas disponible. Veuillez réessayer plus tard."
+      }
+    }
+  }
+}
+
+    
