@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,8 +33,6 @@ const AnimalDetail = ({ label, value }: { label: string; value?: string }) => {
     </div>
   );
 };
-
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 export default async function ForSalePage({
   params,
