@@ -2,20 +2,20 @@
 {
   "Metadata": {
     "title": {
-      "default": "RAII-AI",
-      "template": "%s | RAII-AI"
+      "default": "RAAI-AI",
+      "template": "%s | RAAI-AI"
     },
     "description": "إدارة ذكية للثروة الحيوانية."
   },
   "LandingPage": {
-    "title": "أهلاً بك في RAII-AI",
+    "title": "أهلاً بك في RAAI-AI",
     "subtitle": "الحل الكامل لإدارة ذكية للثروة الحيوانية. قم بتبسيط العمليات ومراقبة الصحة وزيادة الإنتاجية بكل سهولة.",
     "getStarted": "ابدأ الآن",
     "signIn": "تسجيل الدخول"
   },
   "MainLayout": {
     "sidebar": {
-      "title": "RAII-AI",
+      "title": "RAAI-AI",
       "dashboard": "لوحة التحكم",
       "animals": "الحيوانات",
       "symptomChecker": "فاحص الأعراض",
@@ -142,6 +142,14 @@
     "addConsultation": "إضافة استشارة",
     "consultationHistory": "تاريخ الاستشارات",
     "noConsultations": "لم يتم العثور على استشارات.",
+    "basicInfo": "معلومات أساسية",
+    "breed": "السلالة",
+    "gender": "الجنس",
+    "dob": "تاريخ الميلاد",
+    "purpose": "الغرض",
+    "weight": "الوزن",
+    "lastPregnancy": "آخر حمل",
+    "save": "حفظ",
     "tableHeaders": {
       "date": "التاريخ",
       "type": "النوع",
@@ -449,7 +457,7 @@
     }
   },
     "SignupPage": {
-    "title": "التسجيل في RAII-AI",
+    "title": "التسجيل في RAAI-AI",
     "mission": "تبسيط إدارة الثروة الحيوانية.",
     "description": "أدخل معلوماتك لإنشاء حساب.",
     "createAccountButton": "إنشاء حساب",

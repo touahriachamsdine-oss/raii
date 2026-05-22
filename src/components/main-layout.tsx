@@ -74,7 +74,7 @@ const DesktopLayout = ({
     >
       <SidebarHeader className="p-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={48} height={48} alt="RAII-AI Logo" />
+          <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={48} height={48} alt="RAAI-AI Logo" />
           <span className="text-xl font-semibold text-primary group-data-[collapsible=icon]:hidden">{t('sidebar.title')}</span>
         </Link>
       </SidebarHeader>
@@ -115,7 +115,7 @@ const DesktopLayout = ({
         <div className="flex items-center gap-2">
           <SidebarTrigger />
           <Link href="/dashboard" className="hidden peer-data-[state=collapsed]:flex items-center gap-2">
-            <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={48} height={48} alt="RAII-AI Logo" />
+            <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={48} height={48} alt="RAAI-AI Logo" />
             <span className="text-xl font-semibold">{t('sidebar.title')}</span>
           </Link>
         </div>
@@ -148,7 +148,7 @@ const MobileLayout = ({
     <div className="flex flex-col min-h-svh">
       <header className="flex items-center justify-between p-4 bg-card sticky top-0 z-10">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={48} height={48} alt="RAII-AI Logo" />
+          <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={48} height={48} alt="RAAI-AI Logo" />
           <span className="text-lg font-semibold">{t('sidebar.title')}</span>
         </Link>
         <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ export function MainLayout({ children, initialUser }: { children: React.ReactNod
 
   if (!mounted) {
     return <div className="flex items-center justify-center h-screen bg-background">
-      <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={120} height={120} alt="RAII-AI Logo" className="animate-pulse" />
+      <Image src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png" width={120} height={120} alt="RAAI-AI Logo" className="animate-pulse" />
     </div>;
   }
 

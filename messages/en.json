@@ -2,20 +2,20 @@
 {
   "Metadata": {
     "title": {
-      "default": "RAII-AI",
-      "template": "%s | RAII-AI"
+      "default": "RAAI-AI",
+      "template": "%s | RAAI-AI"
     },
     "description": "Intelligent livestock management."
   },
   "LandingPage": {
-    "title": "Welcome to RAII-AI",
+    "title": "Welcome to RAAI-AI",
     "subtitle": "Your complete solution for intelligent livestock management. Streamline operations, monitor health, and boost productivity with ease.",
     "getStarted": "Get Started",
     "signIn": "Sign In"
   },
   "MainLayout": {
     "sidebar": {
-      "title": "RAII-AI",
+      "title": "RAAI-AI",
       "dashboard": "Dashboard",
       "animals": "Animals",
       "symptomChecker": "Symptom Checker",
@@ -142,6 +142,14 @@
     "addConsultation": "Add Consultation",
     "consultationHistory": "Consultation History",
     "noConsultations": "No consultations found.",
+    "basicInfo": "Basic Information",
+    "breed": "Breed",
+    "gender": "Gender",
+    "dob": "Date of Birth",
+    "purpose": "Purpose",
+    "weight": "Weight",
+    "lastPregnancy": "Last Pregnancy",
+    "save": "Save",
     "tableHeaders": {
       "date": "Date",
       "type": "Type",
@@ -449,7 +457,7 @@
     }
   },
   "SignupPage": {
-    "title": "Sign Up for RAII-AI",
+    "title": "Sign Up for RAAI-AI",
     "mission": "Streamlining Livestock Management.",
     "description": "Enter your information to create an account.",
     "createAccountButton": "Create account",

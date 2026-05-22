@@ -61,7 +61,7 @@ export default function LoginPage() {
               src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png"
               width={80}
               height={80}
-              alt="RAII-AI Logo"
+              alt="RAAI-AI Logo"
             />
           </div>
           <CardTitle className="text-2xl">{t('title')}</CardTitle>

@@ -64,7 +64,7 @@ export default function LandingPage() {
             src="https://i.ibb.co/8DKbCq3f/watermarked-1f0f096a-bb6e-4d0e-a490-68278d55363f-1-removebg-preview.png"
             width={320}
             height={320}
-            alt="RAII-AI Logo"
+            alt="RAAI-AI Logo"
             priority
           />
         </div>
