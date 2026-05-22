@@ -28,7 +28,12 @@ export async function searchVets(query: string) {
 export async function assignVet(vetUid: string, farmId: string) {
     try {
         const userResult = await db`SELECT id FROM users WHERE uid = ${vetUid}`;
-        const farmResult = await db`SELECT id FROM farms WHERE farm_id = ${farmId}`;
+        
+        // Resolve farm UUID robustly
+        const farmResult = await db`
+            SELECT id FROM farms 
+            WHERE id::text = ${farmId} OR farm_id = ${farmId}
+        `;
 
         if (userResult.length === 0 || farmResult.length === 0) {
             throw new Error("User or Farm not found");
@@ -49,7 +54,12 @@ export async function assignVet(vetUid: string, farmId: string) {
 export async function unassignVet(vetUid: string, farmId: string) {
     try {
         const userResult = await db`SELECT id FROM users WHERE uid = ${vetUid}`;
-        const farmResult = await db`SELECT id FROM farms WHERE farm_id = ${farmId}`;
+        
+        // Resolve farm UUID robustly
+        const farmResult = await db`
+            SELECT id FROM farms 
+            WHERE id::text = ${farmId} OR farm_id = ${farmId}
+        `;
 
         if (userResult.length === 0 || farmResult.length === 0) {
             throw new Error("User or Farm not found");
@@ -69,11 +79,20 @@ export async function unassignVet(vetUid: string, farmId: string) {
 
 export async function getAssignedVets(farmId: string) {
     try {
+        // Resolve farm UUID robustly
+        const resolvedFarm = await db`
+            SELECT id FROM farms 
+            WHERE id::text = ${farmId} OR farm_id = ${farmId}
+        `;
+        if (resolvedFarm.length === 0) {
+            return [];
+        }
+        const farmUuid = resolvedFarm[0].id;
+
         const vets = await db`
             SELECT u.* FROM users u
             JOIN user_farms uf ON u.id = uf.user_id
-            JOIN farms f ON uf.farm_id = f.id
-            WHERE f.farm_id = ${farmId} AND u.role = 'vet'
+            WHERE uf.farm_id = ${farmUuid} AND u.role = 'vet'
         `;
         return vets.map(v => ({
             ...v,

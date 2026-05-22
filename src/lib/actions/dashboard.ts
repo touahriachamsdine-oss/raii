@@ -4,6 +4,17 @@ import db from '@/lib/db';
 
 export async function getDashboardStats(farmId: string) {
     try {
+        // Resolve farm UUID robustly
+        const resolvedFarm = await db`
+            SELECT id FROM farms 
+            WHERE id::text = ${farmId} OR farm_id = ${farmId}
+        `;
+
+        if (resolvedFarm.length === 0) {
+            return null;
+        }
+        const farmUuid = resolvedFarm[0].id;
+
         const statsResult = await db`
       SELECT
         COUNT(*) as total_animals,
@@ -11,7 +22,7 @@ export async function getDashboardStats(farmId: string) {
         COUNT(*) FILTER (WHERE status = 'Deceased') as deceased_animals,
         COALESCE(SUM(milk_yield_avg_l), 0) as total_milk_yield
       FROM animals
-      WHERE farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE farm_id = ${farmUuid}
     `;
 
         const stats = statsResult[0];
@@ -19,26 +30,26 @@ export async function getDashboardStats(farmId: string) {
         const speciesBreakdown = await db`
       SELECT species, COUNT(*) as count
       FROM animals
-      WHERE farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE farm_id = ${farmUuid}
       AND status = 'Active'
       GROUP BY species
     `;
 
         const openAlertsCount = await db`
       SELECT COUNT(*) as count FROM alerts
-      WHERE farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE farm_id = ${farmUuid}
       AND status = 'open'
     `;
 
         const reproductionCount = await db`
       SELECT COUNT(*) as count FROM animals
-      WHERE farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE farm_id = ${farmUuid}
       AND last_pregnancy_date > now() - interval '1 year'
     `;
 
         const vaccinationsDueCount = await db`
       SELECT COUNT(*) as count FROM animals
-      WHERE farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE farm_id = ${farmUuid}
       AND vaccination_due_on <= now() + interval '7 days'
     `;
 
@@ -46,14 +57,14 @@ export async function getDashboardStats(farmId: string) {
       SELECT c.*, a.name as animal_name
       FROM consultations c
       JOIN animals a ON c.animal_id = a.id
-      WHERE a.farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE a.farm_id = ${farmUuid}
       ORDER BY c.created_at DESC
       LIMIT 5
     `;
 
         const recentAlerts = await db`
       SELECT * FROM alerts
-      WHERE farm_id = (SELECT id FROM farms WHERE farm_id = ${farmId})
+      WHERE farm_id = ${farmUuid}
       ORDER BY created_at DESC
       LIMIT 5
     `;

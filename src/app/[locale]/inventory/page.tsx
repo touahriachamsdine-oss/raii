@@ -294,7 +294,7 @@ export default function InventoryPage() {
                 <Input 
                   id="restockDate" 
                   type="date" 
-                  value={typeof editingItem?.lastRestockDate === 'string' ? editingItem?.lastRestockDate.split('T')[0] : ''} 
+                  value={editingItem?.lastRestockDate ? (typeof editingItem.lastRestockDate === 'string' ? (editingItem.lastRestockDate as string).split('T')[0] : (editingItem.lastRestockDate as any).toISOString ? (editingItem.lastRestockDate as any).toISOString().split('T')[0] : '') : ''} 
                   onChange={(e) => setEditingItem(prev => ({ ...prev, lastRestockDate: e.target.value as any }))}
                 />
               </div>
