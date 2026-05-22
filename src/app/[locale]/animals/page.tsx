@@ -68,19 +68,23 @@ const emptyAnimal: Omit<Animal, 'id' | 'animalId' | 'farmId'> = {
   farmName: '',
 };
 
-const formatDisplayDate = (dateString?: string) => {
+const formatDisplayDate = (dateString?: any) => {
   if (!dateString) return '-';
   try {
-    if (/^\d{4}-\d{2}$/.test(dateString)) {
-      return dateString;
+    const actualStr = typeof dateString === 'string' 
+      ? dateString 
+      : (dateString instanceof Date ? dateString.toISOString() : String(dateString));
+      
+    if (/^\d{4}-\d{2}$/.test(actualStr)) {
+      return actualStr;
     }
-    const date = parseISO(dateString);
+    const date = parseISO(actualStr);
     if (isValid(date)) {
       return format(date, 'MMM d, yyyy');
     }
-    return dateString;
+    return actualStr;
   } catch {
-    return dateString;
+    return typeof dateString === 'string' ? dateString : '-';
   }
 };
 
