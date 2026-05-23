@@ -20,9 +20,9 @@ export default async function SymptomCheckerPage({ params }: { params: Promise<{
   setRequestLocale(locale);
   const t = await getTranslations('SymptomCheckerPage');
 
-  // For now use mock UID as in dashboard, until session is implemented
-  const mockUid = 'c7b5d123-e612-4f32-8e12-1234567890ab';
-  const userProfile = await getUserProfile(mockUid);
+  const currentUser = await getCurrentUser();
+  const uid = currentUser?.uid || 'c7b5d123-e612-4f32-8e12-1234567890ab';
+  const userProfile = await getUserProfile(uid);
   const farmId = userProfile?.farmIds?.[0];
   const animals = farmId ? await getAnimals(farmId) : [];
 
