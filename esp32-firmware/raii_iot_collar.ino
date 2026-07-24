@@ -1,18 +1,14 @@
 /*
  * RAAI-AI IoT Livestock Collar
- * Board: Wemos D1 Mini (ESP8266)
+ * Board: ESP32 D1 Mini (LOLIN/Wemos)
  * Sensors: MAX30102 (HR/SpO2) + DHT11 (Temp/Humidity)
  *
  * First boot: Captive portal for WiFi config (stored in NVS)
- * After: Deep sleep (GPIO16 → RST jumper required), timer wake, report vitals
- *
- * HARDWARE SETUP:
- *   Connect D0 (GPIO16) to RST pin for deep-sleep auto-wake
+ * After: Deep sleep, timer wake, report vitals to server
  */
 
 #include <WiFiManager.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <DHT.h>
 #include <Wire.h>
@@ -27,31 +23,29 @@ String DEVICE_ID;
 
 const uint64_t SLEEP_INTERVAL_SEC = 30 * 60;
 
-// GPIO — D1 Mini pin names
-const int DHT_PIN = 12;       // D6
+// GPIO — ESP32 D1 Mini (D-pin labels in comments)
+const int DHT_PIN = 19;        // D6
 const int DHT_TYPE = DHT11;
-const int I2C_SDA = 4;        // D2
-const int I2C_SCL = 5;        // D1
-const int BUTTON_PIN = 0;     // D3 (FLASH button — do NOT hold at boot)
-const int BAT_ADC_PIN = A0;   // A0 (0–1 V input, 10-bit)
-const int LED_PIN = 2;        // D4 — built-in LED (active LOW)
+const int I2C_SDA = 21;        // D2
+const int I2C_SCL = 22;        // D1
+const int BUTTON_PIN = 0;      // D11 (FLASH button)
+const int BAT_ADC_PIN = 36;    // A0 (ADC1_CH0, 12-bit, 0–3.3 V)
+const int LED_PIN = 2;         // D12 — built-in LED (active LOW)
 
 // ===== GLOBALS =====
 DHT dht(DHT_PIN, DHT_TYPE);
 MAX30105 max30102;
+RTC_DATA_ATTR int bootCount = 0;
+RTC_DATA_ATTR bool wifiConfigured = false;
 
 uint32_t irBuffer[100];
 uint32_t redBuffer[100];
 
-// RTC memory for boot count (ESP8266 has no RTC_DATA_ATTR)
-RTC_NOINIT_ATTR int rtcBootCount;
-RTC_NOINIT_ATTR bool rtcWifiConfigured;
-
 // ===== HELPERS =====
 
 float readBatteryVoltage() {
-    int raw = analogRead(BAT_ADC_PIN);         // 0–1023
-    float voltage = (raw / 1023.0) * 1.0 * 2.0; // 0–1 V ADC × divider ratio
+    int raw = analogRead(BAT_ADC_PIN);           // 0–4095
+    float voltage = (raw / 4095.0) * 3.3 * 2.0;   // voltage divider ×2
     return voltage;
 }
 
@@ -70,7 +64,7 @@ void setupWiFiManager() {
     WiFiManager wm;
     wm.setConfigPortalTimeout(180);
 
-    DEVICE_ID = "RAAI-" + String(ESP.getChipId(), HEX);
+    DEVICE_ID = "RAAI-" + String((uint32_t)(ESP.getEfuseMac() >> 24), HEX);
 
     bool connected = wm.autoConnect(DEVICE_ID.c_str());
     if (!connected) {
@@ -78,7 +72,7 @@ void setupWiFiManager() {
         ESP.restart();
     }
 
-    rtcWifiConfigured = true;
+    wifiConfigured = true;
     Serial.println("WiFi configured. Device ID: " + DEVICE_ID);
 }
 
@@ -103,10 +97,9 @@ bool connectWiFi() {
 // ===== HTTP =====
 
 String checkPendingCommand() {
-    WiFiClient client;
     HTTPClient http;
     String url = String(SERVER_URL) + "/api/iot/pending/" + DEVICE_ID;
-    http.begin(client, url);
+    http.begin(url);
     http.setTimeout(5000);
 
     int code = http.GET();
@@ -125,10 +118,9 @@ String checkPendingCommand() {
 }
 
 bool sendReading(float temperature, int heartRate, float spo2, float battery) {
-    WiFiClient client;
     HTTPClient http;
     String url = String(SERVER_URL) + "/api/iot/readings";
-    http.begin(client, url);
+    http.begin(url);
     http.addHeader("Content-Type", "application/json");
     http.setTimeout(10000);
 
@@ -203,21 +195,21 @@ void setup() {
     digitalWrite(LED_PIN, HIGH); // off (active LOW)
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-    rtcBootCount++;
-    Serial.printf("Boot %d\n", rtcBootCount);
+    bootCount++;
+    Serial.printf("Boot %d — Wake: %d\n", bootCount, esp_sleep_get_wakeup_cause());
 
     blinkLED(2, 100);
 
     // Init sensors
     dht.begin();
     Wire.begin(I2C_SDA, I2C_SCL);
-    max30102.begin(Wire, I2C_SPEED_STANDARD);
+    max30102.begin(Wire, I2C_SPEED_FAST);
     max30102.setup(60, 4, 2);
 
     // Connect WiFi
     if (!connectWiFi()) {
         Serial.println("WiFi failed — deep sleep");
-        ESP.deepSleep(SLEEP_INTERVAL_SEC * 1000000ULL, WAKE_RF_DEFAULT);
+        esp_deep_sleep_start();
         return;
     }
     Serial.println("WiFi connected: " + WiFi.SSID());
@@ -249,9 +241,13 @@ void setup() {
     WiFi.disconnect(true);
     WiFi.mode(WIFI_OFF);
 
+    // Deep sleep — connect D0 (GPIO26) → RST for timer wake
+    esp_sleep_enable_timer_wakeup(SLEEP_INTERVAL_SEC * 1000000ULL);
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_0, 0);
+
     Serial.println("Deep sleep...");
     Serial.flush();
-    ESP.deepSleep(SLEEP_INTERVAL_SEC * 1000000ULL, WAKE_RF_DEFAULT);
+    esp_deep_sleep_start();
 }
 
 void loop() {}
