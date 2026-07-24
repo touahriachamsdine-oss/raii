@@ -11,6 +11,9 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <DHT.h>
+#include <Wire.h>
+#include <MAX30105.h>
+#include <spo2_algorithm.h>
 
 // ===== CONFIGURATION =====
 const char* SERVER_URL = "https://your-app.vercel.app";
@@ -29,8 +32,12 @@ const int LED_PIN = 2;         // D12 — built-in LED (active LOW)
 
 // ===== GLOBALS =====
 DHT dht(DHT_PIN, DHT_TYPE);
+MAX30105 max30102;
 RTC_DATA_ATTR int bootCount = 0;
 RTC_DATA_ATTR bool wifiConfigured = false;
+
+uint32_t irBuffer[100];
+uint32_t redBuffer[100];
 
 // ===== HELPERS =====
 
@@ -189,6 +196,41 @@ int readPulseRate() {
     return constrain(bpm, MIN_BPM, MAX_BPM);
 }
 
+float readSpO2() {
+    // Collect 100 samples from MAX30102
+    int sampleCount = 0;
+    for (int i = 0; i < 100; i++) {
+        while (!max30102.available()) max30102.check();
+        irBuffer[i] = max30102.getIR();
+        redBuffer[i] = max30102.getRed();
+        max30102.nextSample();
+        sampleCount++;
+
+        if (i > 10) {
+            long avg = 0;
+            for (int j = i - 5; j <= i; j++) avg += irBuffer[j];
+            avg /= 5;
+            if (avg < 50000) { sampleCount = i; break; }
+        }
+    }
+
+    if (sampleCount < 10) return 0;
+
+    int32_t spo2Value;
+    int8_t validSPO2;
+    int32_t heartRateValue;
+    int8_t validHeartRate;
+
+    maxim_heart_rate_and_oxygen_saturation(
+        irBuffer, sampleCount, redBuffer,
+        &spo2Value, &validSPO2,
+        &heartRateValue, &validHeartRate
+    );
+
+    if (validSPO2 == 1) return spo2Value / 100.0;
+    return 0;
+}
+
 // ===== SETUP =====
 
 void setup() {
@@ -205,6 +247,10 @@ void setup() {
 
     // Init sensors
     dht.begin();
+    Wire.begin(21, 22);
+    if (max30102.begin(Wire, I2C_SPEED_FAST)) {
+        max30102.setup(60, 4, 2);
+    }
 
     // Connect WiFi
     if (!connectWiFi()) {
@@ -222,9 +268,11 @@ void setup() {
     float temperature = dht.readTemperature();
     if (isnan(temperature)) temperature = 0;
 
-    // Pulse sensor (HW-036)
+    // HW-036 pulse sensor (HR)
     int heartRate = readPulseRate();
-    float spo2 = 0;
+
+    // MAX30102 (SpO2)
+    float spo2 = readSpO2();
 
     // Battery
     float battery = readBatteryVoltage();
