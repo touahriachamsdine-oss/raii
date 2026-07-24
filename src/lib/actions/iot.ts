@@ -34,7 +34,7 @@ export async function getDevices(farmId: string): Promise<IoTDeviceWithAnimal[]>
             WHERE d.farm_id = ${farmUuid}
             ORDER BY d.last_seen_at DESC NULLS LAST
         `;
-        return devices as IoTDeviceWithAnimal[];
+        return devices as unknown as IoTDeviceWithAnimal[];
     } catch (error) {
         console.error("Failed to fetch IoT devices:", error);
         return [];
@@ -54,7 +54,7 @@ export async function getDeviceDetail(deviceId: string): Promise<IoTDeviceWithAn
             LIMIT 1
         `;
         if (devices.length === 0) return null;
-        return devices[0] as IoTDeviceWithAnimal;
+        return devices[0] as unknown as IoTDeviceWithAnimal;
     } catch (error) {
         console.error("Failed to fetch device detail:", error);
         return null;
@@ -73,7 +73,7 @@ export async function getDeviceReadings(deviceId: string, limit = 100): Promise<
             ...r,
             recorded_at: r.recorded_at instanceof Date ? r.recorded_at.toISOString() : String(r.recorded_at),
             created_at: r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at),
-        })) as IoTReading[];
+        })) as unknown as IoTReading[];
     } catch (error) {
         console.error("Failed to fetch device readings:", error);
         return [];
@@ -107,10 +107,10 @@ export async function registerDevice(deviceId: string, farmId?: string, name?: s
 
         await db`
             INSERT INTO iot_devices (id, device_id, farm_id, animal_id, name)
-            VALUES (${uuidv4()}, ${deviceId}, ${farmUuid}, ${animalId || null}, ${name || null})
+            VALUES (${uuidv4()}, ${deviceId}, ${farmUuid}, NULL, ${name || null})
             ON CONFLICT (device_id) DO UPDATE SET
                 farm_id = ${farmUuid},
-                animal_id = COALESCE(${animalId || null}, iot_devices.animal_id),
+                animal_id = iot_devices.animal_id,
                 name = COALESCE(${name || null}, iot_devices.name)
         `;
         revalidatePath('/[locale]/iot');
@@ -174,7 +174,7 @@ export async function getUnlinkedDevices(farmId: string): Promise<IoTDevice[]> {
             WHERE farm_id = ${farmUuid} AND animal_id IS NULL
             ORDER BY created_at DESC
         `;
-        return devices as IoTDevice[];
+        return devices as unknown as IoTDevice[];
     } catch (error) {
         console.error("Failed to fetch unlinked devices:", error);
         return [];
@@ -188,7 +188,7 @@ export async function getDevicesByAnimal(animalId: string): Promise<IoTDevice[]>
             WHERE animal_id = ${animalId}
             ORDER BY created_at DESC
         `;
-        return devices as IoTDevice[];
+        return devices as unknown as IoTDevice[];
     } catch (error) {
         console.error("Failed to fetch devices for animal:", error);
         return [];
