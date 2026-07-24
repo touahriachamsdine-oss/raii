@@ -80,14 +80,30 @@ export async function getDeviceReadings(deviceId: string, limit = 100): Promise<
     }
 }
 
-export async function registerDevice(deviceId: string, farmId: string, animalId?: string, name?: string) {
+export async function registerDevice(deviceId: string, farmId?: string, name?: string) {
     try {
-        const resolvedFarm = await db`
-            SELECT id FROM farms 
-            WHERE id::text = ${farmId} OR farm_id = ${farmId}
-        `;
-        if (resolvedFarm.length === 0) throw new Error("Farm not found");
-        const farmUuid = resolvedFarm[0].id;
+        let farmUuid: string;
+
+        if (farmId) {
+            const resolvedFarm = await db`
+                SELECT id FROM farms 
+                WHERE id::text = ${farmId} OR farm_id = ${farmId}
+            `;
+            if (resolvedFarm.length === 0) throw new Error("Farm not found");
+            farmUuid = resolvedFarm[0].id;
+        } else {
+            const { getSession } = await import('@/lib/session');
+            const session = await getSession();
+            if (!session) throw new Error("Not authenticated");
+            const userId = session.userId as string;
+            const userFarms = await db`
+                SELECT farm_id FROM user_farms
+                WHERE user_id = (SELECT id FROM users WHERE uid = ${userId})
+                LIMIT 1
+            `;
+            if (userFarms.length === 0) throw new Error("No farm found for user");
+            farmUuid = userFarms[0].farm_id;
+        }
 
         await db`
             INSERT INTO iot_devices (id, device_id, farm_id, animal_id, name)

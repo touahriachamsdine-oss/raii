@@ -4,14 +4,25 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { IoTDeviceWithAnimal } from '@/lib/types';
-import { requestReading } from '@/lib/actions/iot';
+import { requestReading, registerDevice } from '@/lib/actions/iot';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Activity, Battery, Thermometer, Heart, Radio, ExternalLink, RefreshCw } from 'lucide-react';
+import { Plus, Activity, Battery, Thermometer, Heart, Radio, ExternalLink, RefreshCw } from 'lucide-react';
 
 function getStatusColor(device: IoTDeviceWithAnimal): string {
     if (!device.last_seen_at) return 'bg-gray-400';
@@ -35,64 +46,136 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
     const { toast } = useToast();
     const [devices, setDevices] = useState(initialDevices);
     const [requestingId, setRequestingId] = useState<string | null>(null);
+    const [regDialogOpen, setRegDialogOpen] = useState(false);
+    const [regDeviceId, setRegDeviceId] = useState('');
+    const [regName, setRegName] = useState('');
+    const [isRegistering, setIsRegistering] = useState(false);
 
     const handleRequestReading = async (deviceId: string) => {
         setRequestingId(deviceId);
         try {
             await requestReading(deviceId);
-            toast({
-                title: t('requestSent'),
-                description: t('requestSentDescription'),
-            });
+            toast({ title: t('requestSent'), description: t('requestSentDescription') });
         } catch {
-            toast({
-                variant: 'destructive',
-                title: t('requestFailed'),
-                description: t('requestFailedDescription'),
-            });
+            toast({ variant: 'destructive', title: t('requestFailed'), description: t('requestFailedDescription') });
         } finally {
             setRequestingId(null);
         }
     };
 
+    const handleRegister = async () => {
+        if (!regDeviceId.trim()) return;
+        setIsRegistering(true);
+        try {
+            // farmId is resolved server-side from the session
+            await registerDevice(regDeviceId.trim(), '', regName.trim() || undefined);
+            toast({ title: t('registered'), description: t('registeredDescription') });
+            setRegDialogOpen(false);
+            setRegDeviceId('');
+            setRegName('');
+            // Optimistically add to local state
+            setDevices(prev => [...prev, {
+                id: '',
+                device_id: regDeviceId.trim(),
+                animal_id: null,
+                farm_id: '',
+                name: regName.trim() || null,
+                battery_level: null,
+                last_seen_at: null,
+                firmware_version: null,
+                created_at: new Date().toISOString(),
+            }]);
+        } catch {
+            toast({ variant: 'destructive', title: t('registerFailed'), description: t('registerFailedDescription') });
+        } finally {
+            setIsRegistering(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-4">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardDescription>{t('stats.totalDevices')}</CardDescription>
-                        <CardTitle className="text-2xl">{devices.length}</CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardDescription>{t('stats.online')}</CardDescription>
-                        <CardTitle className="text-2xl text-green-600">
-                            {devices.filter(d => {
-                                if (!d.last_seen_at) return false;
-                                return (Date.now() - new Date(d.last_seen_at).getTime()) < 3600000;
-                            }).length}
-                        </CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardDescription>{t('stats.linked')}</CardDescription>
-                        <CardTitle className="text-2xl">{devices.filter(d => d.animal_id).length}</CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardDescription>{t('stats.unlinked')}</CardDescription>
-                        <CardTitle className="text-2xl text-yellow-600">{devices.filter(d => !d.animal_id).length}</CardTitle>
-                    </CardHeader>
-                </Card>
+            <div className="flex items-center justify-between">
+                <div className="grid gap-4 md:grid-cols-4 flex-1">
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription>{t('stats.totalDevices')}</CardDescription>
+                            <CardTitle className="text-2xl">{devices.length}</CardTitle>
+                        </CardHeader>
+                    </Card>
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription>{t('stats.online')}</CardDescription>
+                            <CardTitle className="text-2xl text-green-600">
+                                {devices.filter(d => {
+                                    if (!d.last_seen_at) return false;
+                                    return (Date.now() - new Date(d.last_seen_at).getTime()) < 3600000;
+                                }).length}
+                            </CardTitle>
+                        </CardHeader>
+                    </Card>
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription>{t('stats.linked')}</CardDescription>
+                            <CardTitle className="text-2xl">{devices.filter(d => d.animal_id).length}</CardTitle>
+                        </CardHeader>
+                    </Card>
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <CardDescription>{t('stats.unlinked')}</CardDescription>
+                            <CardTitle className="text-2xl text-yellow-600">{devices.filter(d => !d.animal_id).length}</CardTitle>
+                        </CardHeader>
+                    </Card>
+                </div>
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>{t('deviceList.title')}</CardTitle>
-                    <CardDescription>{t('deviceList.description')}</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>{t('deviceList.title')}</CardTitle>
+                        <CardDescription>{t('deviceList.description')}</CardDescription>
+                    </div>
+                    <Dialog open={regDialogOpen} onOpenChange={setRegDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                {t('registerDevice')}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>{t('registerDialog.title')}</DialogTitle>
+                                <DialogDescription>{t('registerDialog.description')}</DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="reg-device-id">{t('registerDialog.deviceId')}</Label>
+                                    <Input
+                                        id="reg-device-id"
+                                        placeholder="ESP32-C3-ABC123"
+                                        value={regDeviceId}
+                                        onChange={e => setRegDeviceId(e.target.value)}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="reg-name">{t('registerDialog.name')}</Label>
+                                    <Input
+                                        id="reg-name"
+                                        placeholder={t('registerDialog.namePlaceholder')}
+                                        value={regName}
+                                        onChange={e => setRegName(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setRegDialogOpen(false)}>
+                                    {t('registerDialog.cancel')}
+                                </Button>
+                                <Button onClick={handleRegister} disabled={isRegistering || !regDeviceId.trim()}>
+                                    {isRegistering ? t('registerDialog.registering') : t('registerDialog.register')}
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </CardHeader>
                 <CardContent>
                     <div className="rounded-lg border overflow-hidden">
@@ -119,7 +202,7 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
                                     </TableRow>
                                 ) : (
                                     devices.map((device) => (
-                                        <TableRow key={device.id}>
+                                        <TableRow key={device.id || device.device_id}>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     <span className={`h-2.5 w-2.5 rounded-full ${getStatusColor(device)}`} />
@@ -174,13 +257,9 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-1">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8"
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8"
                                                         onClick={() => handleRequestReading(device.device_id)}
-                                                        disabled={requestingId === device.device_id}
-                                                    >
+                                                        disabled={requestingId === device.device_id}>
                                                         <RefreshCw className={`h-4 w-4 ${requestingId === device.device_id ? 'animate-spin' : ''}`} />
                                                     </Button>
                                                     <Button variant="ghost" size="icon" className="h-8 w-8" asChild>

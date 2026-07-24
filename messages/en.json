@@ -464,7 +464,22 @@
     "battery": "Battery",
     "unlinked": "Not linked to any animal",
     "chartDescription": "Vital signs over time",
-    "noData": "No data available yet."
+    "noData": "No data available yet.",
+    "registerDevice": "Register Device",
+    "registered": "Device Registered",
+    "registeredDescription": "The device has been registered and will appear once it connects.",
+    "registerFailed": "Registration Failed",
+    "registerFailedDescription": "Could not register the device. Please try again.",
+    "registerDialog": {
+      "title": "Register New Device",
+      "description": "Enter the Device ID shown on the ESP32 during startup.",
+      "deviceId": "Device ID",
+      "name": "Display Name (optional)",
+      "namePlaceholder": "e.g. Collar #1 - Brown Cow",
+      "cancel": "Cancel",
+      "register": "Register",
+      "registering": "Registering..."
+    }
   },
   "LoginPage": {
     "title": "Login",

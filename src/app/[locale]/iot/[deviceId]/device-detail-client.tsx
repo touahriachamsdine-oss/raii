@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { IoTDeviceWithAnimal, IoTReading } from '@/lib/types';
-import { requestReading } from '@/lib/actions/iot';
+import { requestReading, getDeviceReadings } from '@/lib/actions/iot';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,8 +46,18 @@ export function DeviceDetailClient({
 }) {
     const t = useTranslations('IoTPage');
     const { toast } = useToast();
-    const [readings] = useState(initialReadings);
+    const [readings, setReadings] = useState(initialReadings);
     const [isRequesting, setIsRequesting] = useState(false);
+
+    const refreshReadings = useCallback(async () => {
+        const fresh = await getDeviceReadings(device.device_id, 200);
+        if (fresh.length > 0) setReadings(fresh);
+    }, [device.device_id]);
+
+    useEffect(() => {
+        const interval = setInterval(refreshReadings, 10000);
+        return () => clearInterval(interval);
+    }, [refreshReadings]);
 
     const chartData = [...readings]
         .reverse()

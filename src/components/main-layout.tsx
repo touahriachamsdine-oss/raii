@@ -214,6 +214,7 @@ export function MainLayout({ children, initialUser }: { children: React.ReactNod
   const menuItems = [
     { href: '/dashboard', label: t('sidebar.dashboard'), icon: LayoutDashboard },
     { href: '/animals', label: t('sidebar.animals'), icon: List },
+    { href: '/for-sale', label: t('sidebar.forSale') || 'For Sale', icon: Store },
     { href: '/inventory', label: t('sidebar.inventory') || 'Inventory', icon: Package },
     { href: '/symptom-checker', label: t('sidebar.symptomChecker'), icon: HeartPulse },
     { href: '/iot', label: t('sidebar.iot') || 'IoT', icon: Radio },
