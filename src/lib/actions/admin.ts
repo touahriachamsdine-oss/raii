@@ -29,8 +29,8 @@ export async function getFarmDetails(farmId: string) {
         const users = await sql`
       SELECT u.id, u.display_name as "displayName", u.email, u.role
       FROM users u
-      JOIN farm_users fu ON u.id = fu.user_id
-      WHERE fu.farm_id = ${farmId}
+      JOIN user_farms uf ON u.id = uf.user_id
+      WHERE uf.farm_id = ${farmId}
     `;
 
         const animals = await sql`

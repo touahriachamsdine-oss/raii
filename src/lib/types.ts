@@ -97,3 +97,36 @@ export type VaccinationSchedule = {
     status: 'planned' | 'completed' | 'missed';
     notes?: string;
 };
+
+export type IoTDevice = {
+    id: string;
+    device_id: string;
+    animal_id: string | null;
+    farm_id: string;
+    name: string | null;
+    battery_level: number | null;
+    last_seen_at: string | null;
+    firmware_version: string | null;
+    created_at: string;
+};
+
+export type IoTReading = {
+    id: string;
+    device_id: string;
+    animal_id: string | null;
+    temperature: number | null;
+    heart_rate: number | null;
+    spo2: number | null;
+    battery_level: number | null;
+    rssi: number | null;
+    recorded_at: string;
+    created_at: string;
+};
+
+export type IoTDeviceWithAnimal = IoTDevice & {
+    animal_name?: string;
+    animal_species?: string;
+    last_temperature?: number;
+    last_heart_rate?: number;
+    last_spo2?: number;
+};

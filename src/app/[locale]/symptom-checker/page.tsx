@@ -21,8 +21,8 @@ export default async function SymptomCheckerPage({ params }: { params: Promise<{
   const t = await getTranslations('SymptomCheckerPage');
 
   const currentUser = await getCurrentUser();
-  const uid = currentUser?.uid || 'c7b5d123-e612-4f32-8e12-1234567890ab';
-  const userProfile = await getUserProfile(uid);
+  if (!currentUser) redirect('/login');
+  const userProfile = await getUserProfile(currentUser.uid);
   const farmId = userProfile?.farmIds?.[0];
   const animals = farmId ? await getAnimals(farmId) : [];
 

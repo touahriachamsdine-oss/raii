@@ -342,7 +342,7 @@ export default function AnimalProfilePage() {
           )}
 
           <Tabs defaultValue="health" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="health">
                 <History className="mr-2 h-4 w-4" />
                 Health

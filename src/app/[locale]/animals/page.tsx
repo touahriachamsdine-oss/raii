@@ -41,10 +41,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslations } from 'next-intl';
-import { AuthProvider, useDoc, useMemoFirebase, useUser } from '@/lib/neon-client';
+import { useDoc, useMemoFirebase, useUser } from '@/lib/neon-client';
 import { getAnimals, addAnimal, updateAnimal, deleteAnimal } from '@/lib/actions/animals';
 import { Animal } from '@/lib/types';
-import { v4 as uuidv4 } from 'uuid';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';

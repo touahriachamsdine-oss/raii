@@ -23,7 +23,8 @@
       "settings": "Paramètres",
       "forSale": "À Vendre",
       "admin": "Admin",
-      "inventory": "Inventaire"
+      "inventory": "Inventaire",
+      "iot": "Surveillance IoT"
     },
     "userMenu": {
       "guestUser": "Utilisateur Invité",

@@ -30,6 +30,7 @@ import {
   Store,
   LogOut,
   Package,
+  Radio,
   User as UserIcon
 } from 'lucide-react';
 import {
@@ -51,6 +52,7 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AuthProvider, useDoc, useMemoFirebase } from '@/lib/neon-client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { logout } from '@/lib/actions/auth';
 
 
 const DesktopLayout = ({
@@ -214,6 +216,7 @@ export function MainLayout({ children, initialUser }: { children: React.ReactNod
     { href: '/animals', label: t('sidebar.animals'), icon: List },
     { href: '/inventory', label: t('sidebar.inventory') || 'Inventory', icon: Package },
     { href: '/symptom-checker', label: t('sidebar.symptomChecker'), icon: HeartPulse },
+    { href: '/iot', label: t('sidebar.iot') || 'IoT', icon: Radio },
     { href: '/alerts', label: t('sidebar.alerts'), icon: Bell },
   ];
 
@@ -268,11 +271,8 @@ export function MainLayout({ children, initialUser }: { children: React.ReactNod
 }
 
 const UserMenu = ({ t, user }: { t: (key: string) => string; user: any }) => {
-  const router = useRouter();
-
   const handleLogout = async () => {
-    // In a real app, call logout action here
-    window.location.href = '/login';
+    await logout();
   };
 
   if (!user) {

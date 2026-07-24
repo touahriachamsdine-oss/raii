@@ -23,7 +23,8 @@
       "settings": "الإعدادات",
       "forSale": "للبيع",
       "admin": "مسؤول",
-      "inventory": "المخزون"
+      "inventory": "المخزون",
+      "iot": "مراقبة IoT"
     },
     "userMenu": {
       "guestUser": "مستخدم زائر",

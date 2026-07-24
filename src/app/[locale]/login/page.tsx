@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useUser } from '@/lib/neon-client';
 import { login } from '@/lib/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,11 +35,11 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-      router.push('/dashboard');
       toast({
         title: t('toast.success.title'),
         description: t('toast.success.description'),
       });
+      router.push('/dashboard');
     } catch (error: any) {
       toast({
         variant: 'destructive',

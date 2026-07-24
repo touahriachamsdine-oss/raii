@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useAuth } from '@/lib/neon-client';
 import { signup } from '@/lib/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -52,7 +51,6 @@ export default function SignupPage() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -76,12 +74,12 @@ export default function SignupPage() {
         farmName
       });
 
-      router.push('/dashboard');
-
       toast({
         title: t('toast.success.title'),
         description: t('toast.success.description'),
       });
+
+      router.push('/dashboard');
 
     } catch (error: any) {
       toast({

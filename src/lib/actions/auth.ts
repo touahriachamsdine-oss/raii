@@ -31,7 +31,7 @@ export async function getCurrentUser() {
 export async function login(data: any) {
   try {
     const users = await db`
-      SELECT * FROM users WHERE email = ${data.email}
+      SELECT * FROM users WHERE email = ${data.email.toLowerCase()}
     `;
 
     if (users.length === 0) {
@@ -83,7 +83,7 @@ export async function signup(data: any) {
       ) VALUES (
         ${userId}, ${userId}, ${firstName}, ${lastName}, ${firstName + ' ' + lastName},
         ${familyName || null}, ${wilaya}, ${commune}, ${address}, ${idCardNumber || null},
-        ${phoneNumber}, ${email}, ${isAdmin ? 'admin' : role}, ${passwordHash}
+        ${phoneNumber}, ${lowercasedEmail}, ${isAdmin ? 'admin' : role}, ${passwordHash}
       )
     `;
 

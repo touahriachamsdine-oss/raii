@@ -23,7 +23,8 @@
       "settings": "Settings",
       "forSale": "For Sale",
       "admin": "Admin",
-      "inventory": "Inventory"
+      "inventory": "Inventory",
+      "iot": "IoT Monitoring"
     },
     "userMenu": {
       "guestUser": "Guest User",
@@ -427,6 +428,43 @@
         "title": "All Animals on Farm"
       }
     }
+  },
+  "IoTPage": {
+    "title": "IoT Monitoring",
+    "description": "Monitor your livestock vitals from connected IoT devices.",
+    "stats": {
+      "totalDevices": "Total Devices",
+      "online": "Online Now",
+      "linked": "Linked to Animals",
+      "unlinked": "Unlinked"
+    },
+    "deviceList": {
+      "title": "All Devices",
+      "description": "View and manage all connected IoT devices on your farm.",
+      "status": "Status",
+      "deviceId": "Device ID",
+      "animal": "Animal",
+      "temperature": "Temperature",
+      "heartRate": "Heart Rate",
+      "spo2": "SpO2",
+      "battery": "Battery",
+      "lastSeen": "Last Seen",
+      "actions": "Actions",
+      "empty": "No IoT devices registered yet."
+    },
+    "requestReading": "Request Reading",
+    "requestSent": "Reading Requested",
+    "requestSentDescription": "The device will send a reading on its next check-in.",
+    "requestFailed": "Request Failed",
+    "requestFailedDescription": "Could not request a reading. Please try again.",
+    "deviceNotFound": "Device not found.",
+    "temperature": "Temperature",
+    "heartRate": "Heart Rate",
+    "spo2": "SpO2",
+    "battery": "Battery",
+    "unlinked": "Not linked to any animal",
+    "chartDescription": "Vital signs over time",
+    "noData": "No data available yet."
   },
   "LoginPage": {
     "title": "Login",

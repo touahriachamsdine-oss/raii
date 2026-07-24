@@ -81,7 +81,7 @@ export default function DashboardPage() {
   const [isStatsLoading, setIsStatsLoading] = React.useState(true);
 
   const userProfileRef = useMemoFirebase(() => (user ? { collection: 'users', id: user.uid } : null), [user]);
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<any>(userProfileRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{ farmIds: string[] }>(userProfileRef);
   const farmId = userProfile?.farmIds?.[0];
 
   React.useEffect(() => {
