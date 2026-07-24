@@ -1,7 +1,7 @@
 /*
  * RAAI-AI IoT Livestock Collar
  * Board: ESP32 D1 Mini (LOLIN/Wemos)
- * Sensors: MAX30102 (HR/SpO2) + DHT11 (Temp/Humidity)
+ * Sensors: HW-036 pulse sensor (3-pin) + DHT11 (Temp/Humidity)
  *
  * First boot: Captive portal for WiFi config (stored in NVS)
  * After: Deep sleep, timer wake, report vitals to server
@@ -11,10 +11,6 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <DHT.h>
-#include <Wire.h>
-#include <MAX30105.h>
-#include <heartRate.h>
-#include <spo2_algorithm.h>
 
 // ===== CONFIGURATION =====
 const char* SERVER_URL = "https://your-app.vercel.app";
@@ -26,24 +22,20 @@ const uint64_t SLEEP_INTERVAL_SEC = 30 * 60;
 // GPIO — ESP32 D1 Mini (D-pin labels in comments)
 const int DHT_PIN = 19;        // D6
 const int DHT_TYPE = DHT11;
-const int I2C_SDA = 21;        // D2
-const int I2C_SCL = 22;        // D1
+const int PULSE_PIN = 36;      // A0 (HW-036 DATA pin — analog signal 0–3.3V)
 const int BUTTON_PIN = 0;      // D11 (FLASH button)
-const int BAT_ADC_PIN = 36;    // A0 (ADC1_CH0, 12-bit, 0–3.3 V)
+const int BAT_ADC_PIN = -1;    // -1 = disabled (no voltage divider wired yet)
 const int LED_PIN = 2;         // D12 — built-in LED (active LOW)
 
 // ===== GLOBALS =====
 DHT dht(DHT_PIN, DHT_TYPE);
-MAX30105 max30102;
 RTC_DATA_ATTR int bootCount = 0;
 RTC_DATA_ATTR bool wifiConfigured = false;
-
-uint32_t irBuffer[100];
-uint32_t redBuffer[100];
 
 // ===== HELPERS =====
 
 float readBatteryVoltage() {
+    if (BAT_ADC_PIN < 0) return 0;
     int raw = analogRead(BAT_ADC_PIN);           // 0–4095
     float voltage = (raw / 4095.0) * 3.3 * 2.0;   // voltage divider ×2
     return voltage;
@@ -142,48 +134,59 @@ bool sendReading(float temperature, int heartRate, float spo2, float battery) {
 
 // ===== SENSORS =====
 
-bool readMax30102(int &heartRateOut, float &spo2Out) {
-    heartRateOut = 0;
-    spo2Out = 0;
+int readPulseRate() {
+    // Simple peak-detection BPM from analog pulse sensor
+    const int SAMPLE_WINDOW_MS = 10000;  // 10-second sample window
+    const int PEAK_THRESHOLD = 100;      // min mV swing to count as a beat
+    const int MIN_BPM = 20;
+    const int MAX_BPM = 300;
+    const int MIN_INTERVAL_MS = (60000 / MAX_BPM);
+    const int MAX_INTERVAL_MS = (60000 / MIN_BPM);
 
-    int sampleCount = 0;
-    for (int i = 0; i < 100; i++) {
-        while (!max30102.available()) {
-            max30102.check();
-        }
-        irBuffer[i] = max30102.getIR();
-        redBuffer[i] = max30102.getRed();
-        max30102.nextSample();
-        sampleCount++;
+    int peak = 0;
+    int trough = 4095;
+    unsigned long start = millis();
+    unsigned long lastBeat = 0;
+    int beatCount = 0;
+    unsigned long lastPeakTime = 0;
+    bool rising = false;
 
-        if (i > 10) {
-            long avg = 0;
-            for (int j = i - 5; j <= i; j++) avg += irBuffer[j];
-            avg /= 5;
-            if (avg < 50000) {
-                sampleCount = i;
-                break;
+    while (millis() - start < SAMPLE_WINDOW_MS) {
+        int val = analogRead(PULSE_PIN);
+
+        if (val > peak) peak = val;
+        if (val < trough) trough = val;
+
+        int mid = (peak + trough) / 2;
+        int span = peak - trough;
+
+        if (span > PEAK_THRESHOLD) {
+            if (val > mid && !rising) {
+                rising = true;
+                unsigned long now = millis();
+                unsigned long interval = now - lastPeakTime;
+
+                if (lastPeakTime > 0 &&
+                    interval > MIN_INTERVAL_MS &&
+                    interval < MAX_INTERVAL_MS) {
+                    lastBeat = now;
+                    beatCount++;
+                }
+                lastPeakTime = now;
+            } else if (val <= mid) {
+                rising = false;
             }
         }
+
+        delay(10); // ~100 Hz sample rate
     }
 
-    if (sampleCount < 10) return false;
+    if (beatCount < 2) return 0;
 
-    int32_t spo2Value;
-    int8_t validSPO2;
-    int32_t heartRateValue;
-    int8_t validHeartRate;
+    float elapsedMin = SAMPLE_WINDOW_MS / 60000.0;
+    int bpm = round(beatCount / elapsedMin);
 
-    maxim_heart_rate_and_oxygen_saturation(
-        irBuffer, sampleCount, redBuffer,
-        &spo2Value, &validSPO2,
-        &heartRateValue, &validHeartRate
-    );
-
-    if (validHeartRate == 1) heartRateOut = heartRateValue;
-    if (validSPO2 == 1) spo2Out = spo2Value / 100.0;
-
-    return (validHeartRate == 1 || validSPO2 == 1);
+    return constrain(bpm, MIN_BPM, MAX_BPM);
 }
 
 // ===== SETUP =====
@@ -202,9 +205,6 @@ void setup() {
 
     // Init sensors
     dht.begin();
-    Wire.begin(I2C_SDA, I2C_SCL);
-    max30102.begin(Wire, I2C_SPEED_FAST);
-    max30102.setup(60, 4, 2);
 
     // Connect WiFi
     if (!connectWiFi()) {
@@ -222,10 +222,9 @@ void setup() {
     float temperature = dht.readTemperature();
     if (isnan(temperature)) temperature = 0;
 
-    // MAX30102
-    int heartRate = 0;
+    // Pulse sensor (HW-036)
+    int heartRate = readPulseRate();
     float spo2 = 0;
-    bool sensorContact = readMax30102(heartRate, spo2);
 
     // Battery
     float battery = readBatteryVoltage();
@@ -233,8 +232,8 @@ void setup() {
     // Send
     bool sent = sendReading(temperature, heartRate, spo2, battery);
 
-    Serial.printf("Sent:%s T:%.1fC HR:%d SpO2:%.1f%% Bat:%.2fV\n",
-        sent ? "OK" : "FAIL", temperature, heartRate, spo2, battery);
+    Serial.printf("Sent:%s T:%.1fC HR:%d BPM Bat:%.2fV\n",
+        sent ? "OK" : "FAIL", temperature, heartRate, battery);
 
     blinkLED(sent ? 3 : 10, 150);
 
