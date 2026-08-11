@@ -4,6 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: NextRequest) {
     try {
+        // Require a shared secret so only the physical devices can report readings
+        const apiKey = process.env.IOT_API_KEY;
+        const providedKey = request.headers.get('x-api-key');
+        if (!apiKey || providedKey !== apiKey) {
+            return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await request.json();
         const { device_id, temperature, heart_rate, spo2, battery_level, rssi } = body;
 

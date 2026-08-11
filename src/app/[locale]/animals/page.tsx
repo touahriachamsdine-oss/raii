@@ -124,8 +124,9 @@ export default function AnimalsPage() {
 
   const filteredAnimals = React.useMemo(() => {
     if (!animals) return [];
+    const query = (searchQuery || '').toLowerCase();
     return animals.filter(animal =>
-      animal.animalId.toLowerCase().includes(searchQuery.toLowerCase())
+      (animal.animalId || '').toLowerCase().includes(query)
     );
   }, [animals, searchQuery]);
 

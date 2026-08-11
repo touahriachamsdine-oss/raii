@@ -54,7 +54,7 @@ export async function getDashboardStats(farmId: string) {
     `;
 
         const recentConsultations = await db`
-      SELECT c.*, a.name as animal_name
+      SELECT c.*, a.animal_id as animal_name
       FROM consultations c
       JOIN animals a ON c.animal_id = a.id
       WHERE a.farm_id = ${farmUuid}

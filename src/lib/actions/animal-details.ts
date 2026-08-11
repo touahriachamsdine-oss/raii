@@ -38,6 +38,7 @@ export async function getAnimalDetails(animalId: string) {
         return {
             ...animal,
             id: animal.id,
+            animalId: animal.animal_id,
             healthLogs: healthLogs.map(l => ({
                 id: l.id,
                 animalId: l.animal_id,

@@ -18,6 +18,10 @@
 // ===== CONFIGURATION =====
 const char* SERVER_URL = "https://your-app.vercel.app";
 
+// Shared secret — must match IOT_API_KEY in the server's environment
+// Store it on the device via NVS (WiFiManager) in production.
+const char* IOT_API_KEY = "change-me-to-a-random-secret";
+
 String DEVICE_ID;
 
 const uint64_t SLEEP_INTERVAL_SEC = 30 * 60;
@@ -99,6 +103,7 @@ String checkPendingCommand() {
     HTTPClient http;
     String url = String(SERVER_URL) + "/api/iot/pending/" + DEVICE_ID;
     http.begin(url);
+    http.addHeader("x-api-key", IOT_API_KEY);
     http.setTimeout(5000);
 
     int code = http.GET();
@@ -121,6 +126,7 @@ bool sendReading(float temperature, int heartRate, float spo2, float battery) {
     String url = String(SERVER_URL) + "/api/iot/readings";
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
+    http.addHeader("x-api-key", IOT_API_KEY);
     http.setTimeout(10000);
 
     JsonDocument doc;

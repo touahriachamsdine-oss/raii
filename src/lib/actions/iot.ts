@@ -17,7 +17,7 @@ export async function getDevices(farmId: string): Promise<IoTDeviceWithAnimal[]>
         const devices = await db`
             SELECT 
                 d.*,
-                a.name as animal_name,
+                a.animal_id as animal_name,
                 a.species as animal_species,
                 r.temperature as last_temperature,
                 r.heart_rate as last_heart_rate,
@@ -46,7 +46,7 @@ export async function getDeviceDetail(deviceId: string): Promise<IoTDeviceWithAn
         const devices = await db`
             SELECT 
                 d.*,
-                a.name as animal_name,
+                a.animal_id as animal_name,
                 a.species as animal_species
             FROM iot_devices d
             LEFT JOIN animals a ON d.animal_id = a.id

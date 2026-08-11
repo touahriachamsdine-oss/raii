@@ -71,7 +71,6 @@ export async function signup(data: any) {
 
     // 2. Create User
     const lowercasedEmail = email.toLowerCase();
-    const isAdmin = lowercasedEmail === 'admin@gmail.real' || lowercasedEmail === 'hadil@admin.test';
 
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
@@ -83,7 +82,7 @@ export async function signup(data: any) {
       ) VALUES (
         ${userId}, ${userId}, ${firstName}, ${lastName}, ${firstName + ' ' + lastName},
         ${familyName || null}, ${wilaya}, ${commune}, ${address}, ${idCardNumber || null},
-        ${phoneNumber}, ${lowercasedEmail}, ${isAdmin ? 'admin' : role}, ${passwordHash}
+        ${phoneNumber}, ${lowercasedEmail}, ${role}, ${passwordHash}
       )
     `;
 

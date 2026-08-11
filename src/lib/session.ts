@@ -2,7 +2,16 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
-const secretKey = process.env.SESSION_SECRET || 'fallback-secret-key-change-it';
+function getSecretKey(): string {
+  if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('SESSION_SECRET environment variable must be set in production');
+  }
+  // Local development only fallback — never use in production
+  return 'dev-only-fallback-secret-key-change-it';
+}
+
+const secretKey = getSecretKey();
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any) {
@@ -29,7 +38,7 @@ export async function createSession(userId: string) {
     const session = await encrypt({ userId, expiresAt });
     (await cookies()).set('session', session, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
@@ -60,7 +69,7 @@ export async function updateSession(request: NextRequest) {
         name: 'session',
         value: await encrypt(parsed),
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         expires: parsed.expiresAt as Date,
         sameSite: 'lax',
         path: '/',

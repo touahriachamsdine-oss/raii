@@ -15,7 +15,7 @@ export default async function middleware(req: NextRequest) {
   const publicPages = ['/login', '/signup'];
   // Check if pathname ends with any of the public pages or IS exactly a locale root
   const isPublicPage = publicPages.some(page => pathname.endsWith(page)) ||
-    ['/en', '/fr', '/ar', '/'].includes(pathname);
+    ['/en', '/fr', '/ar', '/en/', '/fr/', '/ar/', '/'].includes(pathname);
 
   // 2. Check for session
   const session = req.cookies.get('session')?.value;
@@ -24,9 +24,10 @@ export default async function middleware(req: NextRequest) {
   // 3. Redirect to login if unauthenticated and trying to access private page
   // Exclude static assets and API routes (Genkit might have its own auth)
   if (!payload && !isPublicPage && !pathname.includes('/_next') && !pathname.includes('/api')) {
-    const loginUrl = new URL('/login', req.url);
-    // Optionally preserve the current path for redirect after login
-    // loginUrl.searchParams.set('callbackUrl', pathname);
+    // Preserve the current locale when redirecting to login
+    const localeMatch = pathname.match(/^\/(en|fr|ar)(\/|$)/);
+    const locale = localeMatch ? localeMatch[1] : 'en';
+    const loginUrl = new URL(locale === 'en' ? '/login' : `/${locale}/login`, req.url);
     return NextResponse.redirect(loginUrl);
   }
 

@@ -44,7 +44,7 @@ import {
 
 type Animal = {
   id: string;
-  name: string;
+  animalId: string;
   species: string;
   breed: string;
   dob: string;
@@ -71,6 +71,13 @@ const formatDisplayDate = (dateString?: string | Date) => {
   } catch {
     return String(dateString);
   }
+};
+
+const toDate = (value: string | Date | null | undefined): Date | null => {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  const parsed = parseISO(value);
+  return isValid(parsed) ? parsed : null;
 };
 
 const DetailItem = ({ label, value }: { label: string; value?: string | null }) => (
@@ -294,11 +301,11 @@ export default function AnimalProfilePage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage src={animal.photoUrl} alt={animal.name} />
-            <AvatarFallback className="text-2xl">{animal.name?.charAt(0) || 'A'}</AvatarFallback>
+            <AvatarImage src={animal.photoUrl} alt={animal.animalId} />
+            <AvatarFallback className="text-2xl">{animal.animalId?.charAt(0) || 'A'}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{animal.name}</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{animal.animalId}</h1>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline">{tAnimalSpecies(animal.species.toLowerCase())}</Badge>
               <Badge variant={animal.status === 'Active' ? 'default' : 'secondary'}>
@@ -759,7 +766,8 @@ export default function AnimalProfilePage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={
                         animal.healthLogs?.reduce((acc: any[], curr: any) => {
-                          const month = format(parseISO(curr.date), 'MMM');
+                          const date = toDate(curr.date);
+                          const month = date ? format(date, 'MMM') : 'Unknown';
                           const existing = acc.find(a => a.month === month);
                           if (existing) existing.cost += curr.cost || 0;
                           else acc.push({ month, cost: curr.cost || 0 });

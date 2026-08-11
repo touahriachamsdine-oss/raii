@@ -6,6 +6,8 @@ import { User, Users } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { format, parseISO, isValid } from 'date-fns';
 import { getFarmDetails } from '@/lib/actions/admin';
+import { getCurrentUser } from '@/lib/actions/auth';
+import { redirect } from 'next/navigation';
 import { FarmDownloadButton } from '@/components/admin/farm-download-button';
 
 type Farm = { id: string; name: string; country: string; timezone: string; };
@@ -32,6 +34,10 @@ export default async function FarmDetailPage({ params }: { params: Promise<{ far
   const { farmId, locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
+
+  const user = await getCurrentUser();
+  if (!user || user.role !== 'admin') redirect('/dashboard');
+
   const { farm, users, animals } = await getFarmDetails(farmId) as { farm: Farm, users: UserProfile[], animals: Animal[] };
 
   if (!farm) {

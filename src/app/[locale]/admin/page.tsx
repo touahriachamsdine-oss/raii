@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ChevronRight } from 'lucide-react';
 import { getFarms } from '@/lib/actions/admin';
+import { getCurrentUser } from '@/lib/actions/auth';
+import { redirect } from 'next/navigation';
 
 type Farm = {
   id: string;
@@ -22,6 +24,10 @@ export default async function AdminDashboardPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('Admin.dashboard');
+
+  const user = await getCurrentUser();
+  if (!user || user.role !== 'admin') redirect('/dashboard');
+
   const farms = await getFarms() as Farm[];
 
   return (

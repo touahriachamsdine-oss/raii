@@ -25,7 +25,9 @@ export async function getForSaleAnimals() {
             ...a,
             id: a.id,
             animalId: a.animal_id,
-            createdAt: a.created_at.toISOString(),
+            createdAt: a.created_at
+                ? (a.created_at instanceof Date ? a.created_at.toISOString() : String(a.created_at))
+                : '',
         })) as ForSaleAnimal[];
     } catch (error) {
         console.error("Failed to fetch for-sale animals:", error);
