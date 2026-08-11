@@ -18,13 +18,25 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: false, error: 'device_id is required' }, { status: 400 });
         }
 
-        const devices = await db`
+        let device: { id: string | null; animal_id: string | null; farm_id: string | null };
+
+        const found = await db`
             SELECT id, animal_id, farm_id FROM iot_devices WHERE device_id = ${device_id}
         `;
-        if (devices.length === 0) {
-            return NextResponse.json({ ok: false, error: 'Unknown device' }, { status: 404 });
+        if (found.length === 0) {
+            // Auto-register unknown devices so hardware works without a pre-created row.
+            // New devices are assigned to the first farm so they appear on the owner dashboard.
+            const farms = await db`SELECT id FROM farms ORDER BY created_at ASC LIMIT 1`;
+            const autoFarm = farms.length > 0 ? farms[0].id : null;
+            await db`
+                INSERT INTO iot_devices (id, device_id, farm_id, name)
+                VALUES (${uuidv4()}, ${device_id}, ${autoFarm}, ${device_id})
+                ON CONFLICT (device_id) DO NOTHING
+            `;
+            device = { id: null, animal_id: null, farm_id: autoFarm };
+        } else {
+            device = found[0] as unknown as { id: string | null; animal_id: string | null; farm_id: string | null };
         }
-        const device = devices[0];
 
         await db`
             INSERT INTO iot_readings (id, device_id, animal_id, temperature, heart_rate, spo2, battery_level, rssi)

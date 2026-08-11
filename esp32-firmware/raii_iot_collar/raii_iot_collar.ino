@@ -73,6 +73,7 @@ void setupWiFiManager() {
     wm.setConfigPortalTimeout(180);
 
     DEVICE_ID = "RAAI-" + String((uint32_t)(ESP.getEfuseMac() >> 24), HEX);
+    Serial.println("Device ID: " + DEVICE_ID);
 
     bool connected = wm.autoConnect(DEVICE_ID.c_str());
     if (!connected) {
@@ -150,6 +151,7 @@ bool sendReading(float temperature, int heartRate, float spo2, float battery) {
 
     int code = http.POST(body);
     http.end();
+    if (code != 200) Serial.printf("  > POST /api/iot/readings -> HTTP %d\n", code);
     return code == 200;
 }
 
