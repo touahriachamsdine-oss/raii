@@ -107,6 +107,7 @@ export type IoTDevice = {
     battery_level: number | null;
     last_seen_at: string | null;
     firmware_version: string | null;
+    ip_address: string | null;
     created_at: string;
 };
 

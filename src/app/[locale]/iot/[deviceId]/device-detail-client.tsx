@@ -4,10 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { IoTDeviceWithAnimal, IoTReading } from '@/lib/types';
-import { requestReading, getDeviceReadings } from '@/lib/actions/iot';
+import { requestReading, getDeviceReadings, updateDeviceIp } from '@/lib/actions/iot';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -28,6 +30,8 @@ import {
     Radio,
     ArrowLeft,
     RefreshCw,
+    Wifi,
+    Save,
 } from 'lucide-react';
 
 function getBatteryColor(level: number | null): string {
@@ -35,6 +39,15 @@ function getBatteryColor(level: number | null): string {
     if (level >= 3.5) return 'text-green-500';
     if (level >= 3.0) return 'text-yellow-500';
     return 'text-red-500';
+}
+
+function relativeTime(dateStr: string): string {
+    const diffSec = Math.max(0, Math.round((Date.now() - new Date(dateStr).getTime()) / 1000));
+    if (diffSec < 5) return 'just now';
+    if (diffSec < 60) return `${diffSec}s ago`;
+    const mins = Math.floor(diffSec / 60);
+    if (mins < 60) return `${mins}m ago`;
+    return new Date(dateStr).toLocaleString();
 }
 
 export function DeviceDetailClient({
@@ -48,6 +61,9 @@ export function DeviceDetailClient({
     const { toast } = useToast();
     const [readings, setReadings] = useState(initialReadings);
     const [isRequesting, setIsRequesting] = useState(false);
+    const [ipInput, setIpInput] = useState(device.ip_address ?? '');
+    const [isSavingIp, setIsSavingIp] = useState(false);
+    const [, setTick] = useState(0);
 
     const refreshReadings = useCallback(async () => {
         const fresh = await getDeviceReadings(device.device_id, 200);
@@ -55,9 +71,24 @@ export function DeviceDetailClient({
     }, [device.device_id]);
 
     useEffect(() => {
-        const interval = setInterval(refreshReadings, 10000);
+        const interval = setInterval(() => {
+            refreshReadings();
+            setTick(t => t + 1);
+        }, 10000);
         return () => clearInterval(interval);
     }, [refreshReadings]);
+
+    const handleSaveIp = async () => {
+        setIsSavingIp(true);
+        try {
+            await updateDeviceIp(device.device_id, ipInput);
+            toast({ title: t('ipSaved'), description: t('ipSavedDescription') });
+        } catch {
+            toast({ variant: 'destructive', title: t('ipSaveFailed') });
+        } finally {
+            setIsSavingIp(false);
+        }
+    };
 
     const chartData = [...readings]
         .reverse()
@@ -151,6 +182,82 @@ export function DeviceDetailClient({
                     </CardHeader>
                 </Card>
             </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardDescription><Wifi className="inline h-4 w-4 mr-1" />{t('deviceIp')}</CardDescription>
+                        <CardTitle className="text-xl font-mono">{device.ip_address || '—'}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex gap-2">
+                        <Input
+                            value={ipInput}
+                            onChange={e => setIpInput(e.target.value)}
+                            placeholder={t('ipPlaceholder')}
+                            className="font-mono"
+                        />
+                        <Button onClick={handleSaveIp} disabled={isSavingIp}>
+                            <Save className="mr-2 h-4 w-4" />
+                            {isSavingIp ? t('savingIp') : t('saveIp')}
+                        </Button>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardDescription><Radio className="inline h-4 w-4 mr-1" />{t('lastCheckIn')}</CardDescription>
+                        <CardTitle className="text-xl">
+                            {device.last_seen_at ? relativeTime(device.last_seen_at) : '—'}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-xs text-muted-foreground">
+                        {device.ip_address && (
+                            <span className="inline-flex items-center gap-1">
+                                <span className="h-2 w-2 rounded-full bg-green-500" />
+                                {t('ipDetected')}
+                            </span>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('liveFeed')}</CardTitle>
+                    <CardDescription>{t('liveFeedDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {readings.length === 0 ? (
+                        <div className="text-muted-foreground">{t('noReadingsYet')}</div>
+                    ) : (
+                        <div className="rounded-lg border overflow-hidden">
+                            <table className="w-full text-sm">
+                                <thead className="bg-muted/50 text-xs text-muted-foreground">
+                                    <tr>
+                                        <th className="text-left font-medium px-4 py-2">{t('feed.time')}</th>
+                                        <th className="text-left font-medium px-4 py-2">{t('temperature')}</th>
+                                        <th className="text-left font-medium px-4 py-2">{t('heartRate')}</th>
+                                        <th className="text-left font-medium px-4 py-2">{t('spo2')}</th>
+                                        <th className="text-left font-medium px-4 py-2">{t('battery')}</th>
+                                        <th className="text-left font-medium px-4 py-2">{t('feed.rssi')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {readings.slice(0, 10).map((r) => (
+                                        <tr key={r.id} className="border-t">
+                                            <td className="px-4 py-2 font-mono text-xs">{relativeTime(r.recorded_at)}</td>
+                                            <td className="px-4 py-2">{r.temperature ? `${r.temperature.toFixed(1)}°C` : '—'}</td>
+                                            <td className="px-4 py-2">{r.heart_rate ? `${r.heart_rate} BPM` : '—'}</td>
+                                            <td className="px-4 py-2">{r.spo2 ? `${r.spo2.toFixed(1)}%` : '—'}</td>
+                                            <td className="px-4 py-2">{r.battery_level ? `${r.battery_level.toFixed(2)}V` : '—'}</td>
+                                            <td className="px-4 py-2">{r.rssi ?? '—'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
 
             <Card>
                 <CardHeader>

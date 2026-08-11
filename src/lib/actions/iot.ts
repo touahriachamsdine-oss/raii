@@ -194,3 +194,39 @@ export async function getDevicesByAnimal(animalId: string): Promise<IoTDevice[]>
         return [];
     }
 }
+
+export async function updateDeviceIp(deviceId: string, ipAddress: string) {
+    try {
+        const ip = ipAddress.trim();
+        if (ip && !/^[\w.:\-\/]+$/.test(ip)) {
+            throw new Error("Invalid IP address format");
+        }
+        await db`
+            UPDATE iot_devices SET ip_address = ${ip || null} WHERE device_id = ${deviceId}
+        `;
+        revalidatePath('/[locale]/iot');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update device IP:", error);
+        throw error;
+    }
+}
+
+export async function getDevicesLive(): Promise<IoTDeviceWithAnimal[]> {
+    try {
+        const { getSession } = await import('@/lib/session');
+        const session = await getSession();
+        if (!session) return [];
+        const userId = session.userId as string;
+        const userFarms = await db`
+            SELECT farm_id FROM user_farms
+            WHERE user_id = (SELECT id FROM users WHERE uid = ${userId})
+            LIMIT 1
+        `;
+        if (userFarms.length === 0) return [];
+        return getDevices(userFarms[0].farm_id as string);
+    } catch (error) {
+        console.error("Failed to fetch live devices:", error);
+        return [];
+    }
+}

@@ -16,11 +16,16 @@
 #include <spo2_algorithm.h>
 
 // ===== CONFIGURATION =====
-const char* SERVER_URL = "https://your-app.vercel.app";
+const char* SERVER_URL = "https://raii-ten.vercel.app";
 
 // Shared secret — must match IOT_API_KEY in the server's environment
 // Store it on the device via NVS (WiFiManager) in production.
-const char* IOT_API_KEY = "change-me-to-a-random-secret";
+const char* IOT_API_KEY = "dqtqbqse";
+
+// Default WiFi network (hardcoded). The WiFiManager captive portal
+// can still be used to change or add networks on first boot.
+const char* WIFI_SSID = "OnePlus7t 5-acc";
+const char* WIFI_PASSWORD = "TESTnode13";
 
 String DEVICE_ID;
 
@@ -83,7 +88,9 @@ bool connectWiFi() {
     if (WiFi.status() == WL_CONNECTED) return true;
 
     WiFi.mode(WIFI_STA);
-    WiFi.begin();
+
+    // Try the configured network first
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
     int attempts = 0;
     while (WiFi.status() != WL_CONNECTED && attempts < 20) {
@@ -92,6 +99,7 @@ bool connectWiFi() {
     }
 
     if (WiFi.status() != WL_CONNECTED) {
+        // Fall back to the WiFiManager captive portal to pick/save a network
         setupWiFiManager();
     }
     return WiFi.status() == WL_CONNECTED;

@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 const sql = postgres(process.env.DATABASE_URL, { prepare: false });
 
 try {
-  for (const file of ['sql/001_schema.sql', 'sql/002_iot_tables.sql']) {
+  for (const file of ['sql/001_schema.sql', 'sql/002_iot_tables.sql', 'sql/003_device_ip.sql']) {
     const script = readFileSync(file, 'utf8');
     console.log(`Applying ${file} ...`);
     await sql.unsafe(script);

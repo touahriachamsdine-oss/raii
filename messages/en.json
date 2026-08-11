@@ -449,6 +449,7 @@
       "spo2": "SpO2",
       "battery": "Battery",
       "lastSeen": "Last Seen",
+      "ip": "IP",
       "actions": "Actions",
       "empty": "No IoT devices registered yet."
     },
@@ -479,6 +480,22 @@
       "cancel": "Cancel",
       "register": "Register",
       "registering": "Registering..."
+    },
+    "deviceIp": "Device IP",
+    "ipPlaceholder": "e.g. 192.168.1.42",
+    "saveIp": "Save",
+    "savingIp": "Saving...",
+    "ipSaved": "IP Saved",
+    "ipSavedDescription": "The device IP has been updated.",
+    "ipSaveFailed": "Could not save the IP address. Please try again.",
+    "lastCheckIn": "Last Check-in",
+    "ipDetected": "IP on file",
+    "liveFeed": "Live Readings",
+    "liveFeedDescription": "Most recent readings arriving from the device — updates automatically.",
+    "noReadingsYet": "No readings received yet. Waiting for the device to send data...",
+    "feed": {
+      "time": "Time",
+      "rssi": "RSSI"
     }
   },
   "LoginPage": {

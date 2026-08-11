@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { IoTDeviceWithAnimal } from '@/lib/types';
-import { requestReading, registerDevice } from '@/lib/actions/iot';
+import { requestReading, registerDevice, getDevicesLive } from '@/lib/actions/iot';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -51,6 +51,14 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
     const [regName, setRegName] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
 
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const fresh = await getDevicesLive();
+            if (fresh.length > 0) setDevices(fresh);
+        }, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleRequestReading = async (deviceId: string) => {
         setRequestingId(deviceId);
         try {
@@ -83,6 +91,7 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
                 battery_level: null,
                 last_seen_at: null,
                 firmware_version: null,
+                ip_address: null,
                 created_at: new Date().toISOString(),
             }]);
         } catch {
@@ -190,13 +199,14 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
                                     <TableHead>{t('deviceList.spo2')}</TableHead>
                                     <TableHead>{t('deviceList.battery')}</TableHead>
                                     <TableHead>{t('deviceList.lastSeen')}</TableHead>
+                                    <TableHead>{t('deviceList.ip')}</TableHead>
                                     <TableHead className="text-right">{t('deviceList.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {devices.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                                        <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                                             {t('deviceList.empty')}
                                         </TableCell>
                                     </TableRow>
@@ -254,6 +264,9 @@ export function IoTDashboardClient({ devices: initialDevices }: { devices: IoTDe
                                                 {device.last_seen_at
                                                     ? new Date(device.last_seen_at).toLocaleString()
                                                     : '—'}
+                                            </TableCell>
+                                            <TableCell className="font-mono text-xs text-muted-foreground">
+                                                {device.ip_address || '—'}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-1">
