@@ -1,7 +1,7 @@
 /*
  * RAAI-AI IoT Livestock Collar
  * Board: ESP32 D1 Mini (LOLIN/Wemos)
- * Sensors: HW-036 pulse sensor (3-pin) + DHT11 (Temp/Humidity)
+ * Sensors: MAX30102 (heart rate) + DHT11 (Temp/Humidity)
  *
  * First boot: Captive portal for WiFi config (stored in NVS)
  * After: Deep sleep, timer wake, report vitals to server
@@ -12,8 +12,6 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 #include <Wire.h>
-#include <MAX30105.h>
-#include <spo2_algorithm.h>
 
 // ===== CONFIGURATION =====
 const char* SERVER_URL = "https://raii-ten.vercel.app";
@@ -34,19 +32,43 @@ const uint64_t SLEEP_INTERVAL_SEC = 30 * 60;
 // GPIO — ESP32 D1 Mini (D-pin labels in comments)
 const int DHT_PIN = 19;        // D6
 const int DHT_TYPE = DHT11;
-const int PULSE_PIN = 36;      // A0 (HW-036 DATA pin — analog signal 0–3.3V)
 const int BUTTON_PIN = 0;      // D11 (FLASH button)
 const int BAT_ADC_PIN = -1;    // -1 = disabled (no voltage divider wired yet)
 const int LED_PIN = 2;         // D12 — built-in LED (active LOW)
 
 // ===== GLOBALS =====
 DHT dht(DHT_PIN, DHT_TYPE);
-MAX30105 max30102;
 RTC_DATA_ATTR int bootCount = 0;
 RTC_DATA_ATTR bool wifiConfigured = false;
 
-uint32_t irBuffer[100];
-uint32_t redBuffer[100];
+// MAX30102 registers (raw access — no external library needed)
+#define MAX30102_ADDR 0x57
+#define REG_INTR_ENABLE_1 0x02
+#define REG_INTR_ENABLE_2 0x03
+#define REG_FIFO_WR_PTR 0x04
+#define REG_FIFO_RD_PTR 0x06
+#define REG_FIFO_DATA 0x07
+#define REG_FIFO_CONFIG 0x08
+#define REG_MODE_CONFIG 0x09
+#define REG_SPO2_CONFIG 0x0A
+#define REG_LED1_PA 0x0C
+#define REG_LED2_PA 0x0D
+#define REG_PART_ID 0xFF
+
+bool hasHeart = false;
+
+// MAX30102 heart-rate processing state
+const byte RATE_SIZE = 4;
+byte rates[RATE_SIZE];
+byte rateSpot = 0;
+byte validBeats = 0;
+unsigned long lastBeatTime = 0;
+float dcFilter = 0;
+float acFilter = 0;
+float beatPeak = 0;
+bool inPulse = false;
+long lastIR = 0;
+int beatAvg = 0;
 
 // ===== HELPERS =====
 
@@ -73,7 +95,6 @@ void setupWiFiManager() {
     wm.setConfigPortalTimeout(180);
 
     DEVICE_ID = "RAAI-" + String((uint32_t)(ESP.getEfuseMac() >> 24), HEX);
-    Serial.println("Device ID: " + DEVICE_ID);
 
     bool connected = wm.autoConnect(DEVICE_ID.c_str());
     if (!connected) {
@@ -157,100 +178,133 @@ bool sendReading(float temperature, int heartRate, float spo2, float battery) {
 
 // ===== SENSORS =====
 
-int readPulseRate() {
-    // Simple peak-detection BPM from analog pulse sensor
-    const int SAMPLE_WINDOW_MS = 10000;  // 10-second sample window
-    const int PEAK_THRESHOLD = 100;      // min mV swing to count as a beat
-    const int MIN_BPM = 20;
-    const int MAX_BPM = 300;
-    const int MIN_INTERVAL_MS = (60000 / MAX_BPM);
-    const int MAX_INTERVAL_MS = (60000 / MIN_BPM);
-
-    int peak = 0;
-    int trough = 4095;
-    unsigned long start = millis();
-    unsigned long lastBeat = 0;
-    int beatCount = 0;
-    unsigned long lastPeakTime = 0;
-    bool rising = false;
-
-    while (millis() - start < SAMPLE_WINDOW_MS) {
-        int val = analogRead(PULSE_PIN);
-
-        if (val > peak) peak = val;
-        if (val < trough) trough = val;
-
-        int mid = (peak + trough) / 2;
-        int span = peak - trough;
-
-        if (span > PEAK_THRESHOLD) {
-            if (val > mid && !rising) {
-                rising = true;
-                unsigned long now = millis();
-                unsigned long interval = now - lastPeakTime;
-
-                if (lastPeakTime > 0 &&
-                    interval > MIN_INTERVAL_MS &&
-                    interval < MAX_INTERVAL_MS) {
-                    lastBeat = now;
-                    beatCount++;
-                }
-                lastPeakTime = now;
-            } else if (val <= mid) {
-                rising = false;
-            }
-        }
-
-        delay(10); // ~100 Hz sample rate
-    }
-
-    if (beatCount < 2) return 0;
-
-    float elapsedMin = SAMPLE_WINDOW_MS / 60000.0;
-    int bpm = round(beatCount / elapsedMin);
-
-    return constrain(bpm, MIN_BPM, MAX_BPM);
+bool writeReg(uint8_t reg, uint8_t val) {
+    Wire.beginTransmission(MAX30102_ADDR);
+    Wire.write(reg);
+    Wire.write(val);
+    return Wire.endTransmission() == 0;
 }
 
-float readSpO2() {
-    // Collect 100 samples from MAX30102
-    int sampleCount = 0;
-    for (int i = 0; i < 100; i++) {
-        while (!max30102.available()) max30102.check();
-        irBuffer[i] = max30102.getIR();
-        redBuffer[i] = max30102.getRed();
-        max30102.nextSample();
-        sampleCount++;
-
-        if (i > 10) {
-            long avg = 0;
-            for (int j = i - 5; j <= i; j++) avg += irBuffer[j];
-            avg /= 5;
-            if (avg < 50000) { sampleCount = i; break; }
-        }
+bool readReg(uint8_t reg, uint8_t &val) {
+    Wire.beginTransmission(MAX30102_ADDR);
+    Wire.write(reg);
+    if (Wire.endTransmission(false) != 0) return false;
+    Wire.requestFrom((uint8_t)MAX30102_ADDR, (uint8_t)1);
+    if (Wire.available()) {
+        val = Wire.read();
+        return true;
     }
+    return false;
+}
 
-    if (sampleCount < 10) return 0;
+bool initHeart() {
+    uint8_t id = 0;
+    if (!readReg(REG_PART_ID, id) || id != 0x15) return false;
+    writeReg(REG_MODE_CONFIG, 0x40);   // reset
+    delay(100);
+    writeReg(REG_INTR_ENABLE_1, 0x00);
+    writeReg(REG_INTR_ENABLE_2, 0x00);
+    writeReg(REG_FIFO_CONFIG, 0x10);
+    writeReg(REG_MODE_CONFIG, 0x03);   // Red + IR
+    writeReg(REG_SPO2_CONFIG, 0x67);
+    writeReg(REG_LED1_PA, 0x3F);
+    writeReg(REG_LED2_PA, 0x3F);
+    delay(100);
+    return true;
+}
 
-    int32_t spo2Value;
-    int8_t validSPO2;
-    int32_t heartRateValue;
-    int8_t validHeartRate;
+long readIRSample() {
+    Wire.beginTransmission(MAX30102_ADDR);
+    Wire.write(REG_FIFO_DATA);
+    Wire.endTransmission(false);
+    Wire.requestFrom((uint8_t)MAX30102_ADDR, (uint8_t)6);
+    byte b[6] = {0, 0, 0, 0, 0, 0};
+    for (int i = 0; i < 6; i++) {
+        if (Wire.available()) b[i] = Wire.read();
+    }
+    return (((long)b[3] << 16) | ((long)b[4] << 8) | b[5]) & 0x3FFFFL;
+}
 
-    maxim_heart_rate_and_oxygen_saturation(
-        irBuffer, sampleCount, redBuffer,
-        &spo2Value, &validSPO2,
-        &heartRateValue, &validHeartRate
-    );
+void updateHeartProcessing(long ir, unsigned long sampleTime) {
+    lastIR = ir;
+    float val = (float)ir;
+    if (dcFilter <= 0) dcFilter = val;
+    dcFilter += (val - dcFilter) * 0.003f;
+    float ac = val - dcFilter;
+    acFilter += (ac - acFilter) * 0.15f;
+    if (acFilter > dcFilter * 0.5f) {
+        beatPeak = 0;
+        inPulse = false;
+    } else if (acFilter > beatPeak) {
+        beatPeak = acFilter;
+    }
+    float thresh = (beatPeak * 0.3f > 3.0f) ? beatPeak * 0.3f : 3.0f;
+    if (acFilter > thresh) {
+        if (!inPulse && (sampleTime - lastBeatTime) > 250) {
+            inPulse = true;
+            if (lastBeatTime > 0) {
+                long delta = (long)(sampleTime - lastBeatTime);
+                if (delta > 300 && delta < 2000) {
+                    float bpm = 60000.0f / delta;
+                    if (bpm > 30 && bpm < 220) {
+                        rates[rateSpot++] = (byte)bpm;
+                        if (rateSpot >= RATE_SIZE) rateSpot = 0;
+                        if (validBeats < RATE_SIZE) validBeats++;
+                        int sum = 0;
+                        for (byte j = 0; j < validBeats; j++) sum += rates[j];
+                        beatAvg = sum / validBeats;
+                    }
+                }
+            }
+            lastBeatTime = sampleTime;
+        }
+    } else if (acFilter < thresh * 0.4f) {
+        inPulse = false;
+    }
+    beatPeak *= 0.97f;
+    if (sampleTime - lastBeatTime > 2500) {
+        beatAvg = 0;
+        validBeats = 0;
+        beatPeak = 0;
+    }
+}
 
-    if (validSPO2 == 1) return spo2Value / 100.0;
-    return 0;
+int readMAX30102BPM() {
+    if (!hasHeart) return 0;
+
+    const unsigned long WINDOW_MS = 15000;  // 15-second sample window
+    unsigned long start = millis();
+
+    beatAvg = 0;
+    validBeats = 0;
+    rateSpot = 0;
+    lastBeatTime = 0;
+    dcFilter = 0;
+    acFilter = 0;
+    beatPeak = 0;
+
+    while (millis() - start < WINDOW_MS) {
+        uint8_t wr = 0, rd = 0;
+        readReg(REG_FIFO_WR_PTR, wr);
+        readReg(REG_FIFO_RD_PTR, rd);
+        uint8_t n = (uint8_t)((wr - rd) & 0x1F);
+        unsigned long pollAt = millis();
+        for (uint8_t i = 0; i < n; i++) {
+            long ir = readIRSample();
+            updateHeartProcessing(ir, pollAt - (unsigned long)(n - 1 - i) * 10UL);
+        }
+        delay(10);  // ~100 Hz polling
+    }
+    return beatAvg;
 }
 
 // ===== SETUP =====
 
 void setup() {
     Serial.begin(115200);
+
+    DEVICE_ID = "RAAI-" + String((uint32_t)(ESP.getEfuseMac() >> 24), HEX);
+    Serial.println("Device ID: " + DEVICE_ID);
 
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, HIGH); // off (active LOW)
@@ -264,9 +318,9 @@ void setup() {
     // Init sensors
     dht.begin();
     Wire.begin(21, 22);
-    if (max30102.begin(Wire, I2C_SPEED_FAST)) {
-        max30102.setup(60, 4, 2);
-    }
+    Wire.setClock(400000);
+    hasHeart = initHeart();
+    Serial.println(hasHeart ? "MAX30102 detected" : "MAX30102 NOT found");
 
     // Connect WiFi
     if (!connectWiFi()) {
@@ -284,11 +338,11 @@ void setup() {
     float temperature = dht.readTemperature();
     if (isnan(temperature)) temperature = 0;
 
-    // HW-036 pulse sensor (HR)
-    int heartRate = readPulseRate();
+    // MAX30102 (HR) — 15s sampling window, press finger firmly on the sensor
+    int heartRate = readMAX30102BPM();
 
-    // MAX30102 (SpO2)
-    float spo2 = readSpO2();
+    // SpO2 is not computed by the raw driver
+    float spo2 = 0;
 
     // Battery
     float battery = readBatteryVoltage();

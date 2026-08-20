@@ -44,7 +44,7 @@
     "dotenv": "^16.5.0",
     "embla-carousel-react": "^8.6.0",
     "genkit": "^1.22.0",
-    "genkitx-groq": "^0.30.0",
+    "genkitx-groq": "^0.31.0",
     "jose": "^6.2.2",
     "long": "^5.2.3",
     "lucide-react": "^0.475.0",
